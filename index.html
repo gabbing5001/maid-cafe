@@ -1889,6 +1889,11 @@ function startOAuth(){
 
   const oauthUrl = `https://chzzk.naver.com/account-interlock?clientId=${encodeURIComponent(cid)}&redirectUri=${redirect}&state=${state}`;
 
+  // 디버그: 콘솔에 URL 출력
+  console.log('[치지직 OAuth] 팝업 URL:', oauthUrl);
+  console.log('[치지직 OAuth] clientId:', cid);
+  console.log('[치지직 OAuth] redirectUri:', decodeURIComponent(redirect));
+
   // noopener 없이 팝업 열기 (있으면 팝업 감지 불가)
   const popup = window.open(oauthUrl, 'chzzk_oauth', 'width=500,height=680,left=200,top=100');
   if(!popup || popup.closed){
@@ -1906,8 +1911,8 @@ function startOAuth(){
     try{
       if(popup.closed){ clearInterval(checker); return; }
       const popUrl = popup.location.href;
-      if(popUrl && popUrl.includes('chzzk_code=')){
-        const code = new URL(popUrl).searchParams.get('chzzk_code');
+      if(popUrl && (popUrl.includes('?code=') || popUrl.includes('&code='))){
+        const code = new URL(popUrl).searchParams.get('code');
         clearInterval(checker);
         popup.close();
         if(code) exchangeCode(code);
@@ -1959,10 +1964,15 @@ async function exchangeCode(code){
 // 페이지 로드 시 OAuth redirect code 자동 처리
 (function checkOAuthRedirect(){
   const params=new URLSearchParams(location.search);
-  const code=params.get('chzzk_code');
+  // 치지직은 'code' 파라미터로 전달 (chzzk_code 아님)
+  const code=params.get('code')||params.get('chzzk_code');
   if(code){
+    // URL에서 code 제거
     history.replaceState({},'',location.pathname);
-    // 세션에 저장된 설정 복원
+    // 타이틀 화면 즉시 숨기고 로딩 모달 표시
+    const titleScreen = document.getElementById('titleScreen');
+    if(titleScreen) titleScreen.style.display='none';
+    // sessionStorage에서 channelId 복원
     const saved=sessionStorage.getItem('chzzk_pending');
     if(saved){
       try{
@@ -1970,17 +1980,26 @@ async function exchangeCode(code){
         if(d.channelId) CHZZK.channelId=d.channelId;
       }catch(e){}
     }
+    // 모달 열고 로딩 표시
     document.getElementById('chzzkModal').classList.add('show');
     document.getElementById('chzzkMain').style.display='block';
-    setChzzkStatus('loading','🔄 로그인 완료! 연결 중...');
+    document.getElementById('chzzkDone').style.display='none';
+    setChzzkStatus('loading','🔄 로그인 완료! 토큰 교환 중...');
+    // 타이틀은 숨겼으니 연결 완료 후 게임이 시작돼야 함
+    // connectChzzk 성공 시 launchGame 호출하도록 플래그
+    CHZZK._autoLaunch = true;
     exchangeCode(code);
   }
 })();
 
 async function connectChzzk(){
-  const manualTok = document.getElementById('chzzkAccessTokenManual').value.trim();
-  if(!manualTok){setChzzkStatus('err','⚠ Access Token을 입력하세요 (치지직 개발자센터 → OAuth 발급)');return;}
-  CHZZK.accessToken = manualTok.replace(/^Bearer\s+/i,'');
+  // accessToken은 exchangeCode에서 이미 CHZZK.accessToken에 저장됨
+  // input 값 대신 CHZZK.accessToken 직접 사용
+  if(!CHZZK.accessToken){
+    const manualTok = document.getElementById('chzzkAccessTokenManual')?.value.trim();
+    if(!manualTok){setChzzkStatus('err','⚠ Access Token이 없습니다. 다시 로그인해주세요.');return;}
+    CHZZK.accessToken = manualTok.replace(/^Bearer\s+/i,'');
+  }
   setChzzkStatus('loading','🔄 치지직 서버에 세션 연결 중...');
 
   // ── STEP 1: 세션 URL 발급 (Client 인증)
@@ -2082,6 +2101,19 @@ async function connectChzzk(){
     if(nickInput) nickInput.value = CHZZK.chatOrderUser || '';
     // 3초 후 자동 닫힘
     startAutoClose();
+    // OAuth 리다이렉트로 들어온 경우 → 자동 닫힘 후 게임 시작
+    if(CHZZK._autoLaunch){
+      CHZZK._autoLaunch = false;
+      setTimeout(()=>{
+        closeChzzkModal();
+        if(!G.running){
+          document.getElementById('titleScreen').style.display='none';
+          document.getElementById('hud').style.display='flex';
+          document.getElementById('gameWrap').style.display='grid';
+          startGame();
+        }
+      }, 3200);
+    }
   } catch(e){
     setChzzkStatus('err',`⚠ 구독 실패: ${e.message}<br><small>donation:read 권한이 있는지 확인하세요.</small>`);
   }
