@@ -1745,18 +1745,16 @@ initTitleStars();
 /* ═══════════════════════════════════
    치지직 연동 상태
 ═══════════════════════════════════ */
+// ── Cloudflare Worker 프록시 주소 ──
+// Worker 배포 후 여기에 주소 입력 (끝에 / 없이)
+const PROXY_URL = 'https://chzzk-proxy.kanggabi3600.workers.dev';
+
 const CHZZK = {
-  // ── 앱 자격증명 (서버사이드에 두는 것이 이상적이나 HTML 단독 배포용으로 여기 보관)
-  // ⚠ 이 파일을 공개 배포 시 별도 백엔드 프록시 사용을 권장합니다
   clientId:   'ad9a03d8-0376-4226-a7ec-0e418b12e944',
-  clientSecret: (() => {
-    // 난독화: 분리 저장 후 런타임 조합
-    const p = ['uveTd97mYkh','MNB9rMMRGqR','Hd2MrDikd38','kMIkBMVZGU'];
-    return p.join('');
-  })(),
+  clientSecret: '', // Worker에서 관리 — 여기선 불필요
   channelId:'', accessToken:'',
   sessionKey:'', socketUrl:'', socket:null, step:1,
-  chatOrderUser:'냐피카', // 채팅 주문 허용 닉네임
+  chatOrderUser:'냐피카',
   OPENAPI:'https://openapi.chzzk.naver.com',
 };
 
@@ -1915,10 +1913,11 @@ async function connectWithToken(){
 async function exchangeCode(code){
   setChzzkStatus('loading','🔄 Access Token 교환 중...');
   try{
-    const resp=await fetch(`${CHZZK.OPENAPI}/auth/v1/token`,{
+    // Worker 프록시 경유 (CORS 우회)
+    const resp=await fetch(`${PROXY_URL}/token`,{
       method:'POST',
-      headers:{'Content-Type':'application/json','Client-Id':CHZZK.clientId,'Client-Secret':CHZZK.clientSecret},
-      body:JSON.stringify({grantType:'authorization_code',code,redirectUri:location.href.split('?')[0]})
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({code, redirectUri:location.href.split('?')[0]})
     });
     const data=await resp.json();
     if(data?.content?.accessToken){
@@ -1926,13 +1925,12 @@ async function exchangeCode(code){
       const el=document.getElementById('chzzkAccessTokenManual');
       if(el) el.value='(자동 발급됨)';
       setChzzkStatus('loading','🔄 세션 연결 중...');
-      // 토큰 발급 완료 → 바로 자동 연결 (버튼 누를 필요 없음)
       await connectChzzk();
     } else {
       throw new Error(data?.message||'토큰 교환 실패');
     }
   }catch(e){
-    setChzzkStatus('err','⚠ '+e.message+'<br><small>Access Token을 직접 입력해주세요.</small>');
+    setChzzkStatus('err','⚠ '+e.message);
   }
 }
 
@@ -1988,36 +1986,21 @@ async function connectChzzk(){
   // CORS 우회 불가(브라우저) → 프록시 없이 직접 호출 시도 후 CORS 에러면 안내
   let sessionUrl = null;
   try {
-    const sessResp = await fetch(`${CHZZK.OPENAPI}/open/v1/sessions`, {
+    // Worker 프록시 경유
+    const sessResp = await fetch(`${PROXY_URL}/session`, {
       method:'POST',
-      headers:{
-        'Client-Id': CHZZK.clientId,
-        'Client-Secret': CHZZK.clientSecret,
-        'Content-Type':'application/json',
-      },
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify({})
     });
-    if(!sessResp.ok){
-      const err=await sessResp.json().catch(()=>({}));
-      throw new Error(`세션 발급 실패 (${sessResp.status}): ${err.message||''}`);
-    }
+    if(!sessResp.ok) throw new Error(`세션 발급 실패 (${sessResp.status})`);
     const sessData = await sessResp.json();
     sessionUrl = sessData?.content?.url;
     CHZZK.sessionKey = sessData?.content?.sessionKey || '';
-    if(!sessionUrl) throw new Error('세션 URL이 없습니다. Client-Id/Secret을 확인하세요.');
+    if(!sessionUrl) throw new Error('세션 URL을 받지 못했습니다.');
     CHZZK.socketUrl = sessionUrl;
-    setChzzkStatus('loading','✅ 세션 URL 발급 완료! Socket.IO 연결 중...');
+    setChzzkStatus('loading','✅ 세션 발급 완료! 연결 중...');
   } catch(e){
-    // CORS 에러일 경우 안내 메시지
-    if(e.message.includes('Failed to fetch')||e.message.includes('NetworkError')){
-      setChzzkStatus('err',
-        `⚠ CORS 오류: 브라우저에서 직접 치지직 API 호출이 차단됩니다.<br>
-         → <strong>로컬 프록시 서버</strong>를 통해 실행하거나<br>
-         → Chrome 확장 "CORS Unblock"을 임시 활성화 후 다시 시도하세요.<br>
-         <small style="color:#ff6699">또는 시뮬레이터로 게임을 먼저 체험하세요.</small>`);
-      return;
-    }
-    setChzzkStatus('err',`⚠ ${e.message}`);
+    setChzzkStatus('err',`⚠ 세션 오류: ${e.message}`);
     return;
   }
 
@@ -2036,31 +2019,30 @@ async function connectChzzk(){
   // ── STEP 3: 후원 이벤트 구독
   // POST https://openapi.chzzk.naver.com/open/v1/sessions/events/subscribe/donation?sessionKey=...
   try {
-    const subResp = await fetch(
-      `${CHZZK.OPENAPI}/open/v1/sessions/events/subscribe/donation?sessionKey=${encodeURIComponent(CHZZK.sessionKey)}`,
-      {
-        method:'POST',
-        headers:{
-          'Authorization':`Bearer ${CHZZK.accessToken}`,
-          'Content-Type':'application/json',
-        },
-        body: JSON.stringify({channelId: CHZZK.channelId})
-      }
-    );
+    const subResp = await fetch(`${PROXY_URL}/subscribe/donation`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        sessionKey:  CHZZK.sessionKey,
+        accessToken: CHZZK.accessToken,
+        channelId:   CHZZK.channelId,
+      })
+    });
     if(!subResp.ok){
       const err=await subResp.json().catch(()=>({}));
       throw new Error(`구독 실패 (${subResp.status}): ${err.message||''}`);
     }
     // 채팅 이벤트 구독 (donation:read 와 함께 chat:read 도 구독)
     try {
-      await fetch(
-        `${CHZZK.OPENAPI}/open/v1/sessions/events/subscribe/chat?sessionKey=${encodeURIComponent(CHZZK.sessionKey)}`,
-        {
-          method:'POST',
-          headers:{'Authorization':`Bearer ${CHZZK.accessToken}`,'Content-Type':'application/json'},
-          body: JSON.stringify({channelId: CHZZK.channelId})
-        }
-      );
+      await fetch(`${PROXY_URL}/subscribe/chat`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          sessionKey:  CHZZK.sessionKey,
+          accessToken: CHZZK.accessToken,
+          channelId:   CHZZK.channelId,
+        })
+      });
       console.log('[치지직] 채팅 이벤트 구독 완료');
     } catch(e){ console.warn('[치지직] 채팅 구독 실패 (권한 없을 수 있음):', e.message); }
 
