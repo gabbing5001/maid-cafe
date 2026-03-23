@@ -1894,34 +1894,12 @@ function startOAuth(){
   console.log('[치지직 OAuth] clientId:', cid);
   console.log('[치지직 OAuth] redirectUri:', decodeURIComponent(redirect));
 
-  // noopener 없이 팝업 열기 (있으면 팝업 감지 불가)
-  const popup = window.open(oauthUrl, 'chzzk_oauth', 'width=500,height=680,left=200,top=100');
-  if(!popup || popup.closed){
-    setChzzkStatus('err',
-      `⚠ 팝업이 차단되었습니다.<br>
-       주소창 옆 🚫 아이콘 클릭 → 팝업 허용 → 다시 시도하세요.<br>
-       <small>또는 Access Token을 직접 입력하세요 (아래 고급 메뉴)</small>`
-    );
-    return;
-  }
-  setChzzkStatus('loading','🔄 팝업에서 치지직 로그인을 완료해주세요...');
+  // 게임 상태 저장 (돌아왔을 때 복원용)
+  sessionStorage.setItem('chzzk_was_playing', G.running ? '1' : '0');
 
-  // 팝업 URL 감지로 code 추출
-  const checker = setInterval(()=>{
-    try{
-      if(popup.closed){ clearInterval(checker); return; }
-      const popUrl = popup.location.href;
-      if(popUrl && (popUrl.includes('?code=') || popUrl.includes('&code='))){
-        const code = new URL(popUrl).searchParams.get('code');
-        clearInterval(checker);
-        popup.close();
-        if(code) exchangeCode(code);
-      }
-    }catch(e){ /* cross-origin 접근 오류 — 정상, 계속 폴링 */ }
-  }, 300);
-
-  // 5분 타임아웃
-  setTimeout(()=>{ clearInterval(checker); if(!popup.closed) popup.close(); }, 300000);
+  // 같은 탭에서 열기 (팝업은 네이버 로그인 차단됨)
+  location.href = oauthUrl;
+  return;
 }
 
 
