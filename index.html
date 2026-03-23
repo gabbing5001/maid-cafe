@@ -1,0 +1,3010 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>☕ 메이드 카페 × 치지직</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════
+   RESET & VARIABLES
+══════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  /* ── 메이드 카페: 연분홍 배경 · 화이트 · 찐분홍 · 하늘 · 블랙 글자 ── */
+  --bg:#fde8f0;            /* 연분홍 배경 */
+  --panel:#fdd0e4;         /* 패널 (조금 더 진한 연분홍) */
+  --panel2:#f8bcd8;        /* 패널2 */
+  --panel3:#f5aacc;        /* 패널3 */
+  --border:#ee4499;        /* 찐분홍 보더 */
+  --border2:#cc2277;       /* 딥핑크 보더 */
+  --gold:#cc1166;          /* 찐분홍 강조 (버튼/골드) */
+  --gold2:#aa0055;         /* 더 깊은 핑크 */
+  --gold3:#dd3388;         /* 미드 핑크 */
+  --cream:#ffffff;         /* 순백 */
+  --green:#1a9e50;         /* 서빙 그린 (배경 밝으므로 진하게) */
+  --green2:#107030;
+  --red:#dd1133;
+  --blue:#2288cc;          /* 하늘색 (가독성용 진한 버전) */
+  --pink:#ee2277;          /* 찐분홍 */
+  --purple:#5599cc;        /* 하늘 보조 */
+  --amber:#ee3388;         /* 핑크 accent */
+  --amber2:#cc1166;        /* 딥핑크 */
+  --text:#1a0820;          /* 거의 블랙 — 가독성 최우선 */
+  --text2:#661144;         /* 딥핑크 보조 텍스트 */
+  --shadow:rgba(180,0,80,0.18);
+  --maid1:#ee2277;         /* 리본 찐분홍 */
+  --maid2:#ffffff;         /* 앞치마 순백 */
+  --maid3:#1a0820;         /* 드레스 블랙 */
+  --sky:#88ccff;           /* 하늘색 */
+  --sky2:#cceeff;          /* 연하늘 */
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:'Jua',sans-serif;color:var(--text);}
+
+/* ══════════════════════════════════════
+   TITLE SCREEN
+══════════════════════════════════════ */
+#titleScreen{
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(160deg,#fce8f4 0%,#f8ddf0 55%,#eeeeff 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:0;overflow:hidden;
+}
+.ts-stars{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+.ts-star{
+  position:absolute;font-size:13px;background:none;border-radius:0;
+  animation:twinkle var(--d,2.5s) ease-in-out infinite;
+}
+@keyframes twinkle{0%,100%{opacity:0.08;transform:scale(0.8);}50%{opacity:0.3;transform:scale(1.1);}}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
+
+/* ── 간판 전체 구조 ── */
+.ts-signage{display:flex;flex-direction:column;align-items:center;margin-bottom:20px;}
+.ts-sign-hooks{display:flex;gap:130px;margin-bottom:0;z-index:2;position:relative;}
+.ts-sh{width:3px;height:16px;background:rgba(180,60,100,0.35);border-radius:2px;}
+.ts-sign-pole{width:10px;height:32px;background:linear-gradient(to right,rgba(238,100,170,0.2),rgba(238,100,170,0.4),rgba(238,100,170,0.2));border-radius:5px;margin:0 auto;}
+
+/* ── 간판 보드 ── */
+.ts-sign-board{
+  width:340px;
+  background:rgba(255,255,255,0.93);
+  border:2.5px solid rgba(238,80,150,0.28);
+  border-radius:16px;
+  padding:22px 30px 18px;
+  text-align:center;
+  box-shadow:0 8px 32px rgba(238,34,119,0.10),0 1px 0 rgba(255,255,255,0.9) inset;
+  position:relative;
+  backdrop-filter:blur(14px);
+}
+
+/* ── 보드 리본 장식 ── */
+.ts-sign-ribbon{
+  position:absolute;top:-22px;left:50%;transform:translateX(-50%);
+  width:68px;height:40px;pointer-events:none;
+}
+.tsr-knot{
+  position:absolute;width:13px;height:13px;
+  background:radial-gradient(circle at 38%34%,#ffaad0,#ee2277);
+  border-radius:50%;top:15px;left:50%;transform:translateX(-50%);
+  box-shadow:0 1px 5px rgba(238,34,119,0.3);z-index:2;
+}
+.tsr-loop{
+  position:absolute;width:24px;height:19px;
+  background:linear-gradient(135deg,rgba(255,210,230,0.95),#ff6aaa);
+  top:9px;
+  box-shadow:0 2px 5px rgba(238,34,119,0.15);
+}
+.tsr-loop--l{left:1px;transform:rotate(-22deg);border-radius:50% 4px 4px 50%;}
+.tsr-loop--r{right:1px;transform:rotate(22deg);border-radius:4px 50% 50% 4px;}
+.tsr-tail{position:absolute;width:9px;height:14px;background:linear-gradient(to bottom,#ff6aaa,rgba(255,106,170,0.1));clip-path:polygon(0 0,100% 0,75% 100%,25% 100%);bottom:0;}
+.tsr-tail--l{left:20px;transform:rotate(-8deg);transform-origin:top center;}
+.tsr-tail--r{right:20px;transform:rotate(8deg);transform-origin:top center;}
+
+/* ── 간판 텍스트 ── */
+.ts-sign-title{
+  font-family:'Jua',sans-serif;font-size:2rem;color:#cc1166;
+  letter-spacing:5px;line-height:1;margin-bottom:4px;
+  text-shadow:0 2px 12px rgba(238,34,119,0.12);
+}
+.ts-sign-sub{font-size:0.62rem;letter-spacing:4px;color:#ee99bb;font-family:'Nanum Gothic',sans-serif;margin-bottom:8px;}
+.ts-sign-divider{display:flex;align-items:center;gap:8px;margin:6px 0 8px;}
+.ts-sign-divider span:not(.ts-sd-dot){flex:1;height:1px;background:linear-gradient(to right,transparent,rgba(238,34,119,0.18),transparent);}
+.ts-sd-dot{width:6px;height:6px;background:#ee4499;border-radius:50%;flex:none;}
+.ts-sign-tagline{font-family:'Nanum Gothic',sans-serif;font-size:0.73rem;color:#aa4466;line-height:1.7;}
+
+/* ── 정보 패널 (타이쿤 느낌) ── */
+.ts-info-row{display:flex;gap:10px;margin-bottom:20px;}
+.ts-info-box{
+  background:rgba(255,255,255,0.85);
+  border:1.5px solid rgba(238,100,170,0.22);
+  border-radius:12px;padding:10px 18px;text-align:center;min-width:84px;
+  box-shadow:0 2px 10px rgba(238,34,119,0.06);backdrop-filter:blur(6px);
+}
+.ts-ib-center{
+  border-color:rgba(238,34,119,0.35);
+  box-shadow:0 4px 16px rgba(238,34,119,0.12);
+  transform:translateY(-3px);
+}
+.ts-ib-icon{font-size:1.25rem;margin-bottom:3px;}
+.ts-ib-label{font-size:0.58rem;color:#cc88aa;font-family:'Nanum Gothic',sans-serif;margin-bottom:2px;}
+.ts-ib-val{font-size:0.8rem;font-family:'Jua',sans-serif;color:#cc1166;letter-spacing:1px;}
+
+/* ── 버튼 ── */
+.ts-btns{display:flex;gap:10px;align-items:center;margin-bottom:12px;}
+.ts-btn-main{
+  background:linear-gradient(135deg,#ee2277,#cc0055);
+  border:none;border-radius:10px;
+  padding:13px 40px;font-family:'Jua',sans-serif;font-size:1.05rem;
+  color:#fff;cursor:pointer;letter-spacing:3px;
+  box-shadow:0 4px 18px rgba(238,34,119,0.28);transition:all 0.15s;
+}
+.ts-btn-main:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(238,34,119,0.38);}
+.ts-btn-main:active{transform:translateY(2px);}
+.ts-btn-sub{
+  background:rgba(255,255,255,0.88);
+  border:1.5px solid rgba(238,34,119,0.28);border-radius:10px;
+  padding:13px 22px;font-family:'Jua',sans-serif;font-size:0.88rem;
+  color:#cc1166;cursor:pointer;letter-spacing:2px;
+  box-shadow:0 2px 10px rgba(238,34,119,0.07);transition:all 0.15s;
+}
+.ts-btn-sub:hover{border-color:rgba(238,34,119,0.55);transform:translateY(-1px);}
+.ts-hint{font-family:'Nanum Gothic',sans-serif;font-size:0.67rem;color:#cc88aa;letter-spacing:0.5px;}
+
+/* (이하 미사용 CSS — 호환성 유지) */
+.btn-start{display:none;}
+
+/* ══════════════════════════════════════
+   CHZZK SETUP MODAL
+══════════════════════════════════════ */
+#chzzkModal{
+  position:fixed;inset:0;z-index:10000;
+  background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);
+  display:none;align-items:center;justify-content:center;
+}
+#chzzkModal.show{display:flex;}
+.chzzk-box{
+  background:#ffffff;
+  border:3px solid var(--border);border-radius:16px;
+  padding:28px 32px;max-width:420px;width:92%;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+.chzzk-title{
+  font-size:1.1rem;color:var(--gold);letter-spacing:2px;
+  margin-bottom:6px;display:flex;align-items:center;gap:8px;
+}
+.chzzk-badge-sm{
+  background:linear-gradient(135deg,#7a20c0,#5010a0);
+  border:1px solid #9040d0;border-radius:12px;
+  padding:2px 10px;font-size:0.65rem;color:#d0a0ff;
+}
+.chzzk-desc{font-family:'Nanum Gothic',sans-serif;font-size:0.8rem;color:var(--text);line-height:1.7;margin-bottom:18px;}
+.chzzk-input-wrap{margin-bottom:12px;}
+.chzzk-label{font-size:0.75rem;color:var(--text);margin-bottom:5px;font-family:'Nanum Gothic',sans-serif;}
+.chzzk-input{
+  width:100%;background:#fde8f0;border:2px solid var(--border2);border-radius:8px;
+  padding:10px 14px;font-family:'Nanum Gothic',sans-serif;font-size:0.85rem;
+  color:var(--text);outline:none;transition:border-color 0.2s;
+}
+.chzzk-input:focus{border-color:var(--gold);}
+.chzzk-input::placeholder{color:#cc4488;}
+.chzzk-buttons{display:flex;gap:8px;margin-top:16px;}
+.btn-chzzk-connect{
+  flex:1;background:linear-gradient(135deg,#8b2fc9,#5b10a0);
+  border:2px solid #a050e0;border-radius:8px;
+  padding:10px;font-family:'Jua',sans-serif;font-size:0.95rem;
+  color:#f0e0ff;cursor:pointer;letter-spacing:1px;transition:all 0.15s;
+}
+.btn-chzzk-connect:hover{background:linear-gradient(135deg,#ff4499,#6b20b0);}
+.btn-chzzk-skip{
+  background:var(--panel3);border:2px solid var(--border2);border-radius:8px;
+  padding:10px 20px;font-family:'Jua',sans-serif;font-size:0.85rem;
+  color:var(--text2);cursor:pointer;transition:all 0.15s;
+}
+.btn-chzzk-skip:hover{border-color:var(--border);}
+.chzzk-status{
+  margin-top:10px;padding:8px 12px;border-radius:6px;
+  font-family:'Nanum Gothic',sans-serif;font-size:0.78rem;
+  display:none;
+}
+.chzzk-status.ok{display:block;background:rgba(20,150,70,0.1);border:1px solid var(--green);color:var(--green);}
+.chzzk-status.err{display:block;background:rgba(200,0,50,0.08);border:1px solid var(--red);color:#ff8080;}
+.chzzk-status.loading{display:block;background:rgba(200,0,80,0.08);border:1px solid var(--gold2);color:var(--gold);}
+.chzzk-step{flex:1;padding:7px 4px;text-align:center;font-size:0.72rem;border-bottom:2px solid var(--border2);color:var(--text2);cursor:pointer;transition:all 0.2s;}
+.chzzk-step.active{border-bottom:2px solid var(--purple);color:#c090f0;font-weight:700;}
+.chzzk-step.done{border-bottom:2px solid var(--green);color:var(--green);}
+
+/* ══════════════════════════════════════
+   HUD
+══════════════════════════════════════ */
+#hud{
+  height:52px;background:#ffffff;
+  border-bottom:2px solid var(--border);
+  display:flex;align-items:center;gap:0;
+  flex-shrink:0;position:relative;
+  box-shadow:0 2px 12px rgba(238,34,119,0.1);
+}
+.hud-logo{
+  padding:0 18px;font-size:1rem;color:var(--gold2);font-weight:700;
+  letter-spacing:2px;border-right:2px solid rgba(238,34,119,0.2);
+  white-space:nowrap;
+}
+.hud-stats{display:flex;align-items:stretch;flex:1;}
+.hud-stat{
+  display:flex;align-items:center;gap:7px;
+  padding:0 16px;border-right:1px solid rgba(238,34,119,0.15);
+  font-size:0.85rem;color:var(--text);
+}
+.hud-stat .hs-icon{font-size:1rem;}
+.hud-stat .hs-val{color:var(--gold2);font-size:1rem;font-weight:700;}
+.hud-timer-wrap{flex:1;display:flex;align-items:center;padding:0 16px;gap:10px;}
+.hud-timer-label{font-size:0.75rem;color:var(--text2);font-weight:700;white-space:nowrap;}
+#timerBar{flex:1;height:10px;background:#fce8f4;border:1px solid rgba(238,34,119,0.2);border-radius:5px;overflow:hidden;}
+#timerFill{height:100%;border-radius:4px;transition:width 0.3s,background 0.5s;background:linear-gradient(to right,var(--green),#80e060);}
+.hud-chzzk{
+  display:flex;align-items:center;gap:6px;padding:0 14px;
+  border-left:1px solid rgba(238,34,119,0.2);font-size:0.72rem;
+  cursor:pointer;transition:background 0.2s;color:var(--text2);
+}
+.hud-chzzk:hover{background:rgba(255,255,255,0.03);}
+.hud-chzzk-dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:dotBlink 2s ease-in-out infinite;}
+.hud-chzzk-dot.live{background:var(--green);}
+@keyframes dotBlink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.hud-day{padding:0 14px;font-size:0.8rem;color:var(--text2);font-weight:700;white-space:nowrap;}
+
+/* ══════════════════════════════════════
+   MAIN LAYOUT
+══════════════════════════════════════ */
+#gameWrap{
+  display:grid;
+  grid-template-columns:260px 1fr 220px;
+  grid-template-rows:1fr 170px;
+  height:calc(100vh - 52px);
+  overflow:hidden;
+}
+
+/* ══════════════════════════════════════
+   LEFT PANEL — 재료 선택
+══════════════════════════════════════ */
+#leftPanel{
+  grid-row:1/3;grid-column:1;
+  background:#fdd0e4;
+  border-right:3px solid var(--border2);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.lp-header{
+  padding:12px 14px 10px;
+  border-bottom:2px solid var(--border2);
+  background:#f8bcd8;
+}
+.lp-title{font-size:0.85rem;color:var(--gold);letter-spacing:2px;}
+.cat-tabs{display:flex;gap:4px;margin-top:8px;}
+.cat-tab{
+  padding:5px 10px;border-radius:6px;border:1.5px solid var(--border2);
+  background:rgba(255,255,255,0.5);cursor:pointer;font-size:0.72rem;
+  font-family:'Jua',sans-serif;color:var(--text);transition:all 0.15s;
+}
+.cat-tab.active,.cat-tab:hover{background:var(--gold);border-color:var(--gold2);color:#ffffff;}
+
+.ing-grid{
+  flex:1;overflow-y:auto;padding:10px;
+  display:grid;grid-template-columns:1fr 1fr;gap:7px;
+  align-content:start;
+}
+.ing-grid::-webkit-scrollbar{width:4px;}
+.ing-grid::-webkit-scrollbar-track{background:var(--bg);}
+.ing-grid::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+.ing-btn{
+  background:#ffffff;border:2px solid var(--border2);border-radius:10px;
+  padding:8px 4px;cursor:pointer;text-align:center;
+  transition:all 0.15s;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;
+  overflow:hidden;min-height:64px;justify-content:center;
+}
+.ing-btn:hover{border-color:var(--amber);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.4);}
+.ing-btn.sel{border-color:var(--gold);background:#fdd0e4;box-shadow:0 0 10px rgba(245,200,66,0.2);}
+.ing-btn.sel::after{
+  content:'✓';position:absolute;top:-6px;right:-6px;
+  width:16px;height:16px;background:var(--gold);border-radius:50%;
+  font-size:0.6rem;color:#fde8f0;display:flex;align-items:center;justify-content:center;
+  line-height:16px;
+}
+.ing-name{font-size:0.68rem;color:var(--text);}
+.ing-price-badge{font-size:0.6rem;color:var(--gold);background:rgba(245,200,66,0.1);border-radius:4px;padding:1px 5px;}
+
+/* ── CSS 재료 일러스트들 ── */
+.css-art{width:40px;height:40px;position:relative;flex-shrink:0;overflow:hidden;}
+
+/* 에스프레소 */
+.art-espresso .cup{width:28px;height:20px;background:linear-gradient(to bottom,#fff8f4,#fff0e8);border-radius:2px 2px 6px 6px;border:2px solid #c8a888;position:absolute;bottom:2px;left:6px;}
+.art-espresso .cup::after{content:'';position:absolute;top:4px;left:4px;right:4px;height:6px;background:radial-gradient(ellipse,#6b3520 0%,#3d1800 100%);border-radius:50%;}
+.art-espresso .handle{width:8px;height:10px;border:2px solid #c8a888;border-left:none;border-radius:0 6px 6px 0;position:absolute;right:4px;bottom:7px;}
+.art-espresso .plate{width:34px;height:5px;background:linear-gradient(to bottom,#e8d8c8,#d0b898);border-radius:50%;position:absolute;bottom:0;left:3px;}
+
+/* 우유 */
+.art-milk .bottle{width:18px;height:34px;background:linear-gradient(to right,#ffffff,#f4f0ee);border-radius:3px 3px 5px 5px;border:2px solid #d0c8c0;position:absolute;bottom:0;left:11px;}
+.art-milk .cap{width:12px;height:6px;background:#5599dd;border-radius:3px 3px 0 0;border:2px solid #3377bb;position:absolute;top:0;left:14px;}
+.art-milk .label{position:absolute;top:12px;left:13px;width:14px;height:12px;background:#ddeeff;border-radius:2px;border:1px solid #99bbdd;}
+
+/* 물 */
+.art-water .drop{width:20px;height:26px;background:linear-gradient(135deg,rgba(150,210,255,0.9),rgba(80,160,230,0.7));border-radius:50% 50% 50% 50% / 30% 30% 70% 70%;border:2px solid rgba(100,180,255,0.6);position:absolute;bottom:4px;left:10px;}
+.art-water .drop::before{content:'';position:absolute;top:4px;left:4px;width:6px;height:8px;background:rgba(255,255,255,0.5);border-radius:50%;transform:rotate(-20deg);}
+
+/* 귀리우유 */
+.art-oat .box{width:22px;height:30px;background:linear-gradient(to right,#f5e8c0,#e8d8a0);border-radius:3px;border:2px solid #c8a860;position:absolute;bottom:0;left:9px;}
+.art-oat .box::before{content:'🌾';font-size:0.65rem;position:absolute;top:6px;left:2px;}
+.art-oat .straw{width:3px;height:20px;background:linear-gradient(to bottom,#80c040,#60a020);border-radius:2px;position:absolute;top:-8px;right:10px;}
+
+/* 바닐라 */
+/* 바닐라: 투명 유리병에 크림색 시럽 */
+.art-vanilla .bottle2{width:14px;height:30px;background:linear-gradient(to right,rgba(255,250,240,0.9),rgba(245,238,200,0.85));border-radius:4px 4px 6px 6px;border:2px solid #c8a860;position:absolute;bottom:0;left:13px;box-shadow:inset 1px 0 0 rgba(255,255,255,0.6);}
+.art-vanilla .vcap{width:12px;height:8px;background:linear-gradient(to bottom,#8B6914,#6a5010);border-radius:3px 3px 1px 1px;position:absolute;top:0;left:14px;border:1px solid #5a4008;}
+.art-vanilla .vlabel{width:18px;height:14px;background:#fffdf0;border:1px solid #d4b860;border-radius:2px;position:absolute;top:10px;left:11px;font-size:0.42rem;color:#7a5a10;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.art-vanilla .vfill{width:8px;height:16px;background:linear-gradient(to top,rgba(220,190,80,0.5),rgba(255,240,150,0.3));border-radius:0 0 3px 3px;position:absolute;bottom:2px;left:17px;}
+
+/* 카라멜 */
+/* 카라멜: 황금갈색 소스 항아리 */
+.art-caramel .jar{width:24px;height:22px;background:linear-gradient(135deg,#f5a820,#d48010);border-radius:4px 4px 6px 6px;border:2px solid #b06a08;position:absolute;bottom:0;left:8px;box-shadow:inset -2px 0 0 rgba(0,0,0,0.1);}
+.art-caramel .jar::before{content:'';position:absolute;top:4px;left:3px;width:6px;height:12px;background:rgba(255,220,100,0.4);border-radius:3px;}
+.art-caramel .jlid{width:26px;height:7px;background:linear-gradient(to bottom,#c8860a,#a06808);border-radius:4px;position:absolute;bottom:20px;left:7px;border:1px solid #8a5606;}
+.art-caramel .drip{width:5px;height:12px;background:linear-gradient(to bottom,#d08010,rgba(200,120,0,0));border-radius:0 0 4px 4px;position:absolute;bottom:-2px;left:17px;}
+
+/* 말차 */
+/* 말차: 금속 깡통 + 대나무 체 */
+.art-matcha .tin{width:22px;height:26px;background:linear-gradient(135deg,#5a9840,#3a7820);border-radius:4px 4px 4px 4px;border:2px solid #2a6018;position:absolute;bottom:0;left:9px;box-shadow:inset -3px 0 0 rgba(0,0,0,0.15);}
+.art-matcha .tin::before{content:'';position:absolute;top:0;left:0;right:0;height:8px;background:linear-gradient(to bottom,rgba(255,255,255,0.15),transparent);border-radius:2px 2px 0 0;}
+.art-matcha .tin::after{content:'抹茶';font-size:0.36rem;color:rgba(255,255,255,0.85);position:absolute;top:8px;left:2px;letter-spacing:-1px;}
+.art-matcha .spoon{width:16px;height:4px;background:linear-gradient(to right,#d0b060,#b09040);border-radius:4px;position:absolute;bottom:18px;right:0px;transform:rotate(-35deg);box-shadow:0 1px 2px rgba(0,0,0,0.2);}
+.art-matcha .powder{width:18px;height:6px;background:radial-gradient(ellipse,rgba(100,180,60,0.5),transparent);position:absolute;bottom:0px;left:8px;border-radius:50%;}
+
+/* 초코 */
+/* 초콜릿: 진한 갈색 판 + 격자 눈금 */
+.art-choco .bar{width:30px;height:20px;background:linear-gradient(135deg,#5c2e10,#3d1e08);border-radius:3px;border:2px solid #4a2408;position:absolute;bottom:8px;left:5px;box-shadow:0 2px 4px rgba(0,0,0,0.3);}
+.art-choco .bar::before{content:'';position:absolute;inset:3px;background:repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 8px),repeating-linear-gradient(0deg,rgba(255,255,255,0.06) 0,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 10px);}
+.art-choco .bar::after{content:'';position:absolute;top:2px;left:2px;width:10px;height:5px;background:rgba(255,255,255,0.08);border-radius:2px;}
+.art-choco .melt{width:18px;height:9px;background:linear-gradient(to bottom,rgba(92,46,16,0.8),transparent);border-radius:0 0 6px 6px;position:absolute;bottom:3px;left:11px;}
+
+/* 딸기 */
+/* 딸기: 빨간 딸기 + 초록 잎 + 시럽 방울 */
+.art-straw .berry{width:22px;height:24px;background:radial-gradient(circle at 40% 35%,#ff6070,#cc2030);border-radius:40% 40% 50% 50%;border:2px solid #a01828;position:absolute;bottom:4px;left:9px;box-shadow:inset -3px -2px 0 rgba(0,0,0,0.1);}
+.art-straw .berry::before{content:'';position:absolute;top:3px;left:3px;width:7px;height:9px;background:rgba(255,255,255,0.18);border-radius:50%;transform:rotate(-20deg);}
+.art-straw .seeds{position:absolute;top:7px;left:11px;display:grid;grid-template-columns:1fr 1fr;gap:3px;}
+.art-straw .seed{width:2.5px;height:3.5px;background:#f0d820;border-radius:1px;transform:rotate(5deg);}
+.art-straw .leaf{width:14px;height:9px;background:linear-gradient(135deg,#50c030,#308020);border-radius:50% 50% 0 0;position:absolute;top:-5px;left:13px;transform:rotate(-10deg);border:1px solid #208010;}
+.art-straw .drop{width:5px;height:7px;background:rgba(200,20,40,0.5);border-radius:50% 50% 50% 50%/30% 30% 70% 70%;position:absolute;bottom:-3px;right:9px;}
+
+/* 우유거품 */
+.art-foam .cup2{width:26px;height:18px;background:linear-gradient(to bottom,#fff8f4,#fff0e8);border-radius:2px 2px 6px 6px;border:2px solid #c8a888;position:absolute;bottom:2px;left:7px;}
+.art-foam .foam-top{width:30px;position:absolute;bottom:18px;left:5px;}
+.art-foam .fb{width:10px;height:8px;background:#ffffff;border-radius:50%;border:1.5px solid #e0d8d0;position:absolute;}
+.art-foam .fb1{left:0;bottom:0;}
+.art-foam .fb2{left:8px;bottom:3px;}
+.art-foam .fb3{left:16px;bottom:0;}
+
+/* 휘핑 */
+.art-whip .base{width:28px;height:16px;background:linear-gradient(to bottom,#fff8f4,#fff0e8);border-radius:2px 2px 6px 6px;border:2px solid #c8a888;position:absolute;bottom:0;left:6px;}
+.art-whip .spiral{position:absolute;bottom:14px;left:8px;width:24px;height:20px;}
+.art-whip .sc{position:absolute;background:#fffaf8;border:1.5px solid #e8ddd0;border-radius:50%;}
+.art-whip .sc1{width:20px;height:14px;bottom:0;left:2px;}
+.art-whip .sc2{width:16px;height:11px;bottom:8px;left:4px;}
+.art-whip .sc3{width:12px;height:9px;bottom:14px;left:6px;}
+
+/* 시나몬 */
+.art-cinnamon .stick1{width:6px;height:28px;background:linear-gradient(to right,#ff5599,#c08050,#ff5599);border-radius:3px;position:absolute;bottom:4px;left:12px;transform:rotate(10deg);}
+.art-cinnamon .stick2{width:6px;height:24px;background:linear-gradient(to right,#ff88bb,#b87840,#ff88bb);border-radius:3px;position:absolute;bottom:4px;left:20px;transform:rotate(-5deg);}
+
+/* 아이스크림: 전체 40px 안에 딱 맞게 */
+.art-ice{overflow:hidden;}
+.art-ice .cone{width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-top:22px solid #f4c87a;position:absolute;bottom:0;left:8px;}
+.art-ice .cone::before{content:'';position:absolute;top:-22px;left:-6px;right:-6px;height:22px;background:repeating-linear-gradient(60deg,rgba(200,140,40,0.25) 0,rgba(200,140,40,0.25) 1px,transparent 1px,transparent 4px);}
+.art-ice .scoop{width:24px;height:17px;background:radial-gradient(circle at 40%35%,#fff8f4,#ffe8e8);border-radius:50% 50% 30% 30%;border:2px solid #f0c0b0;position:absolute;bottom:19px;left:8px;box-shadow:0 1px 3px rgba(200,100,80,0.15);}
+.art-ice .scoop2{width:20px;height:13px;background:radial-gradient(circle at 40%35%,#ffe0f0,#ffb8d8);border-radius:50% 50% 30% 30%;border:1.5px solid #f090c0;position:absolute;bottom:29px;left:10px;}
+
+/* 차콜 */
+.art-charcoal .glass{width:22px;height:26px;background:linear-gradient(to bottom,rgba(20,20,30,0.9),rgba(10,10,20,0.95));border-radius:2px 2px 6px 6px;border:2px solid #404060;position:absolute;bottom:0;left:9px;}
+.art-charcoal .glass::before{content:'';position:absolute;top:4px;left:2px;width:4px;height:14px;background:rgba(255,255,255,0.08);border-radius:2px;}
+.art-charcoal .straw2{width:3px;height:22px;background:linear-gradient(to bottom,#606080,#404060);border-radius:2px;position:absolute;bottom:18px;right:9px;}
+
+/* 라벤더 */
+/* 라벤더: 보라색 유리병 + 라벤더 가지 */
+.art-lavender .bottle3{width:14px;height:28px;background:linear-gradient(135deg,rgba(200,170,240,0.9),rgba(150,110,210,0.85));border-radius:4px 4px 7px 7px;border:2px solid #9060b8;position:absolute;bottom:0;left:13px;box-shadow:inset 1px 0 0 rgba(255,255,255,0.4);}
+.art-lavender .bottle3::before{content:'';position:absolute;top:4px;left:2px;width:4px;height:16px;background:rgba(255,255,255,0.2);border-radius:2px;}
+.art-lavender .lcap{width:12px;height:8px;background:linear-gradient(to bottom,#7050a0,#5030808);border-radius:3px 3px 1px 1px;position:absolute;top:0;left:14px;border:1px solid #4a2878;}
+.art-lavender .sprig{position:absolute;top:0px;right:3px;}
+.art-lavender .sprig-stem{width:2px;height:16px;background:linear-gradient(to top,#6a8040,#8aaa50);border-radius:1px;position:absolute;right:3px;}
+.art-lavender .sprig-fl{width:5px;height:5px;background:radial-gradient(circle,#cc88ee,#9944cc);border-radius:50%;position:absolute;}
+.art-lavender .sprig-fl:nth-child(2){top:-9px;right:1px;}
+.art-lavender .sprig-fl:nth-child(3){top:-13px;right:4px;}
+.art-lavender .sprig-fl:nth-child(4){top:-9px;right:7px;}
+
+/* 로즈 */
+/* 로즈: 핑크 투명 병 + 장미꽃 */
+.art-rose .bottle4{width:14px;height:28px;background:linear-gradient(135deg,rgba(255,180,200,0.88),rgba(220,130,160,0.82));border-radius:4px 4px 7px 7px;border:2px solid #c06080;position:absolute;bottom:0;left:13px;box-shadow:inset 1px 0 0 rgba(255,255,255,0.4);}
+.art-rose .rcap{width:12px;height:8px;background:linear-gradient(to bottom,#aa3060,#882040);border-radius:3px 3px 1px 1px;position:absolute;top:0;left:14px;border:1px solid #6a1830;}
+.art-rose .petal-wrap{position:absolute;top:-10px;right:-1px;width:18px;height:16px;}
+.art-rose .petal{width:9px;height:9px;background:radial-gradient(circle at 55%40%,#ff99bb,#ee3366);border-radius:50% 10% 50% 10%;position:absolute;box-shadow:0 1px 3px rgba(200,0,60,0.2);}
+.art-rose .petal:nth-child(1){transform:rotate(0deg);top:4px;left:4px;}
+.art-rose .petal:nth-child(2){transform:rotate(72deg);top:0px;left:4px;}
+.art-rose .petal:nth-child(3){transform:rotate(144deg);top:2px;left:8px;}
+.art-rose .rcenter{width:5px;height:5px;background:radial-gradient(circle,#ffddee,#ee2266);border-radius:50%;position:absolute;top:6px;left:6px;z-index:2;}
+
+/* 코코넛밀크 */
+.art-coconut .nut{width:28px;height:26px;background:radial-gradient(circle at 40% 35%,#8b6040,#5c3a18);border-radius:50% 50% 40% 40%;border:2px solid #4a2a10;position:absolute;bottom:2px;left:6px;}
+.art-coconut .nut::before{content:'';position:absolute;top:6px;left:8px;width:10px;height:10px;background:radial-gradient(#fff8f0,#f0e8d0);border-radius:50%;border:2px solid #e0d0b0;}
+
+/* 레몬 */
+.art-lemon .fruit{width:26px;height:24px;background:radial-gradient(circle at 35% 35%,#ffff80,#e0c000);border-radius:40% 60% 50% 50%;border:2px solid #c0a000;position:absolute;bottom:4px;left:7px;}
+.art-lemon .fruit::after{content:'';position:absolute;top:4px;left:4px;width:8px;height:6px;background:rgba(255,255,255,0.3);border-radius:50%;transform:rotate(-20deg);}
+.art-lemon .nub{width:8px;height:6px;background:#c8b000;border-radius:50%;position:absolute;bottom:24px;right:8px;}
+
+/* 블루베리 */
+.art-blueberry .berries{position:absolute;bottom:4px;left:4px;display:flex;flex-wrap:wrap;gap:3px;width:36px;}
+.art-blueberry .bb{width:12px;height:12px;background:radial-gradient(circle at 35% 30%,#8090e0,#4050a0);border-radius:50%;border:1.5px solid #3040a0;}
+
+/* 복숭아 */
+.art-peach .fruit2{width:26px;height:26px;background:radial-gradient(circle at 40% 35%,#ffb880,#f07030);border-radius:50%;border:2px solid #e06020;position:absolute;bottom:2px;left:7px;}
+.art-peach .fruit2::before{content:'';position:absolute;top:2px;left:3px;width:8px;height:10px;background:rgba(255,255,255,0.25);border-radius:50%;transform:rotate(-15deg);}
+.art-peach .leaf2{width:12px;height:8px;background:#50a030;border-radius:80% 0 80% 0;position:absolute;bottom:26px;left:16px;transform:rotate(30deg);}
+
+/* ── 선택된 재료 표시 ── */
+.selected-area{
+  padding:10px 12px;
+  border-top:2px solid var(--border2);
+  background:#f8bcd8;
+  min-height:70px;
+}
+.sa-title{font-size:0.72rem;color:var(--text2);margin-bottom:6px;}
+.sa-tags{display:flex;flex-wrap:wrap;gap:4px;min-height:28px;}
+.sa-tag{
+  background:var(--gold);border:1.5px solid var(--gold3);color:#fff;
+  border-radius:12px;padding:3px 9px;font-size:0.68rem;
+  color:var(--cream);cursor:pointer;display:flex;align-items:center;gap:3px;
+}
+.sa-tag:hover{background:#cc2266;}
+.sa-empty{font-size:0.72rem;color:#cc4488;font-style:italic;font-family:'Nanum Gothic',sans-serif;}
+
+/* ── 주문 목록 섹션 ── */
+.ol-section-label{
+  font-size:0.65rem;color:var(--text2);letter-spacing:1px;
+  font-family:'Nanum Gothic',sans-serif;
+  padding:3px 4px;margin-bottom:4px;
+  border-bottom:1px solid rgba(238,34,119,0.15);
+}
+/* 수락된 주문 카드 */
+.order-item.accepted{
+  border-color:rgba(238,34,119,0.45)!important;
+  background:rgba(255,255,255,0.95);
+}
+/* 순서 번호 */
+.oi-seq{
+  width:18px;height:18px;border-radius:50%;
+  background:var(--gold2);color:#fff;
+  font-size:0.65rem;font-family:'Jua',sans-serif;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+/* 수락 버튼 */
+.oi-accept-btn{
+  background:linear-gradient(135deg,#ee2277,#cc0055);
+  border:none;border-radius:6px;
+  padding:4px 10px;font-family:'Jua',sans-serif;font-size:0.68rem;
+  color:#fff;cursor:pointer;letter-spacing:1px;
+  white-space:nowrap;flex-shrink:0;
+  transition:all 0.15s;
+}
+.oi-accept-btn:hover{background:linear-gradient(135deg,#ff3388,#ee0066);transform:scale(1.04);}
+
+.sa-hint{width:100%;font-size:0.68rem;font-family:'Nanum Gothic',sans-serif;margin-top:5px;padding:4px 6px;background:rgba(238,34,119,0.04);border-radius:5px;border:1px solid rgba(238,34,119,0.1);line-height:1.5;}
+
+/* ══════════════════════════════════════
+   CENTER — 카페 씬
+══════════════════════════════════════ */
+#cafeScene{
+  grid-row:1;grid-column:2;
+  position:relative;overflow:hidden;
+  background:linear-gradient(to bottom,#fce0ec 0%,#f8d0e4 100%);
+  border-bottom:3px solid var(--border2);
+}
+
+/* CSS 카페 배경 */
+.scene-wall{position:absolute;top:0;left:0;right:0;height:46%;background:#f4c8dc;}
+.scene-wall::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0px,transparent 59px,rgba(255,255,255,0.015) 59px,rgba(255,255,255,0.015) 60px);}
+.scene-floor{position:absolute;bottom:0;left:0;right:0;height:54%;}
+.scene-floor::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,0.02) 0px,rgba(255,255,255,0.02) 1px,transparent 1px,transparent 50px),repeating-linear-gradient(0deg,rgba(255,255,255,0.02) 0px,rgba(255,255,255,0.02) 1px,transparent 1px,transparent 50px);}
+
+/* CSS 창문 */
+.css-window{
+  position:absolute;top:18px;left:40px;
+  width:88px;height:75px;
+}
+.cw-frame{width:100%;height:100%;background:linear-gradient(135deg,#cceeff,#aaddff);border:5px solid #ff6699;border-radius:4px;position:relative;box-shadow:inset 0 0 20px rgba(0,80,160,0.3);}
+.cw-cross-h{position:absolute;top:50%;left:0;right:0;height:4px;background:#ff6699;transform:translateY(-50%);}
+.cw-cross-v{position:absolute;top:0;bottom:0;left:50%;width:4px;background:#ff6699;transform:translateX(-50%);}
+.cw-light{position:absolute;top:6px;left:6px;width:20px;height:24px;background:rgba(100,180,255,0.2);border-radius:2px;}
+.cw-sill{position:absolute;bottom:-7px;left:-4px;right:-4px;height:8px;background:linear-gradient(to bottom,#ee4488,#cc2277);border-radius:2px;}
+/* 창문 밖 가로등 */
+.css-lamp{position:absolute;top:10px;right:24px;}
+.lamp-pole{width:4px;height:55px;background:linear-gradient(to right,#aa1166,#f5aacc,#aa1166);border-radius:2px;}
+.lamp-arm{width:20px;height:4px;background:linear-gradient(to right,#ff6699,#f5aacc);border-radius:2px;position:absolute;top:8px;right:0;}
+.lamp-head{width:14px;height:10px;background:linear-gradient(to bottom,#ffc0dc,#ff80b8);border-radius:3px 3px 0 0;position:absolute;top:0;right:-5px;}
+.lamp-glow{width:22px;height:22px;background:radial-gradient(circle,rgba(255,192,220,0.5),transparent 70%);border-radius:50%;position:absolute;top:-4px;right:-9px;}
+
+/* CSS 메뉴 보드 */
+.css-menuboard{
+  position:absolute;top:14px;right:30px;
+  width:115px;height:80px;
+  background:linear-gradient(to bottom,#ffffff,#fff0f8);
+  border:3px solid #ff80b8;border-radius:5px;
+  padding:6px 8px;
+  box-shadow:2px 3px 0 rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.mb-title{font-size:0.6rem;color:var(--gold2);text-align:center;border-bottom:1px solid var(--border2);padding-bottom:3px;margin-bottom:4px;letter-spacing:2px;}
+.mb-item{font-size:0.56rem;color:var(--text);display:flex;justify-content:space-between;margin-bottom:2px;font-family:'Nanum Gothic',sans-serif;}
+
+/* CSS 카운터 */
+.scene-counter{
+  position:absolute;bottom:50%;left:0;right:0;
+  height:52px;transform:translateY(50%);
+  z-index:5;
+}
+.counter-top{
+  position:absolute;top:0;left:0;right:0;height:14px;
+  background:linear-gradient(to bottom,#ff5599,#cc2266);
+  border-top:3px solid #ff80b8;
+  box-shadow:0 3px 0 rgba(0,0,0,0.4);
+}
+.counter-body{
+  position:absolute;top:14px;left:0;right:0;height:38px;
+  background:linear-gradient(to bottom,#f5aacc,#fce0ec);
+  border-bottom:3px solid #3a1e04;
+}
+
+/* CSS 에스프레소 머신 */
+.css-machine{
+  position:absolute;bottom:calc(50% + 30px);right:80px;
+  z-index:8;
+}
+.mach-body{width:52px;height:58px;background:linear-gradient(135deg,#ffffff,#e8f4ff);border-radius:6px 6px 4px 4px;border:2px solid #88ccff;box-shadow:2px 3px 0 rgba(0,0,0,0.3),inset 1px 1px 0 rgba(255,255,255,0.2);}
+.mach-screen{width:28px;height:14px;background:linear-gradient(135deg,#0a1840,#081030);border-radius:3px;border:2px solid #88ccff;position:absolute;top:8px;left:12px;box-shadow:0 0 6px rgba(0,200,80,0.3);}
+.mach-screen::after{content:'☕';font-size:0.6rem;position:absolute;top:1px;left:50%;transform:translateX(-50%);color:#00ff80;opacity:0.8;}
+.mach-btn{width:8px;height:8px;border-radius:50%;border:1px solid #606080;position:absolute;}
+.mach-btn1{background:radial-gradient(circle,#ff6060,#c00000);top:26px;left:10px;}
+.mach-btn2{background:radial-gradient(circle,#60ff60,#008000);top:26px;left:22px;}
+.mach-btn3{background:radial-gradient(circle,#6060ff,#000080);top:26px;left:34px;}
+.mach-nozzle{width:14px;height:5px;background:linear-gradient(to bottom,#88ccff,#4499cc);border-radius:0 0 4px 4px;position:absolute;bottom:6px;left:19px;}
+.mach-nozzle::after{content:'';width:3px;height:14px;background:linear-gradient(to bottom,#c8a060,rgba(200,160,96,0));position:absolute;bottom:0;left:50%;transform:translateX(-50%);border-radius:2px;animation:drip 2s ease-in-out infinite;}
+@keyframes drip{0%,100%{opacity:0;transform:translateX(-50%) scaleY(0);}30%{opacity:1;transform:translateX(-50%) scaleY(1);}80%{opacity:0.5;transform:translateX(-50%) scaleY(1.3);}}
+.mach-steam-wrap{position:absolute;top:-18px;left:10px;display:flex;gap:4px;}
+.mach-sl{width:3px;height:14px;background:linear-gradient(to top,rgba(220,200,180,0.6),transparent);border-radius:2px;animation:steamRise 2s ease-in-out infinite;}
+.mach-sl:nth-child(2){animation-delay:.5s;height:10px;}
+.mach-sl:nth-child(3){animation-delay:1s;}
+
+/* CSS 선반 + 컵들 */
+.css-shelf{position:absolute;bottom:calc(50% + 80px);left:20px;width:100px;height:10px;background:linear-gradient(to bottom,#ee4488,#cc2277);border-radius:2px;box-shadow:0 3px 0 rgba(0,0,0,0.3);z-index:4;}
+.shelf-cups{position:absolute;bottom:calc(50% + 90px);left:24px;display:flex;gap:6px;z-index:4;}
+.shelf-cup{
+  width:16px;height:16px;
+  background:linear-gradient(to bottom,#ffffff,#ffe0f0);
+  border-radius:1px 1px 4px 4px;border:1.5px solid #d0a060;
+}
+.shelf-cup:nth-child(2){background:linear-gradient(to bottom,#cceeFF,#88ccff);}
+.shelf-cup:nth-child(3){background:linear-gradient(to bottom,#f0ffe0,#d0f0b0);}
+
+/* CSS 케이크 쇼케이스 */
+.css-showcase{position:absolute;bottom:calc(50% + 26px);left:20px;width:90px;height:56px;z-index:6;}
+.sc-glass{width:100%;height:100%;background:rgba(100,180,255,0.2);border:2px solid #d0b060;border-radius:4px;backdrop-filter:blur(1px);}
+.sc-base{position:absolute;bottom:-4px;left:-2px;right:-2px;height:6px;background:linear-gradient(to bottom,#ff80b8,#cc2266);border-radius:3px;}
+/* 케이크 슬라이스 */
+.sc-cake{position:absolute;bottom:6px;left:8px;}
+.scc-body{width:24px;height:20px;background:linear-gradient(to right,#ff6aaa,#cc2266);border-radius:0 0 2px 2px;border:1.5px solid #ff4090;clip-path:polygon(0 100%,50% 0%,100% 100%);}
+.scc-cream{position:absolute;top:-5px;left:4px;width:16px;height:7px;background:#fff;border-radius:50% 50% 0 0;}
+/* 마카롱들 */
+.sc-macarons{position:absolute;bottom:6px;right:6px;display:flex;flex-direction:column;gap:2px;}
+.sc-mac{width:18px;height:14px;border-radius:50%;border:1.5px solid rgba(0,0,0,0.2);position:relative;}
+.sc-mac::after{content:'';position:absolute;top:50%;left:0;right:0;height:2px;background:rgba(255,255,255,0.4);}
+.sc-mac1{background:linear-gradient(to bottom,#f0b0c0,#d080a0);}
+.sc-mac2{background:linear-gradient(to bottom,#c0d0f0,#8090d0);}
+.sc-mac3{background:linear-gradient(to bottom,#c8e8a0,#90c060);}
+
+/* CSS 테이블들 */
+.css-table{position:absolute;bottom:8%;display:flex;flex-direction:column;align-items:center;}
+.ct-surface{width:76px;height:13px;background:linear-gradient(to bottom,#ff99cc,#ee3388);border-radius:3px 3px 0 0;border:2px solid #c08040;box-shadow:0 2px 0 rgba(0,0,0,0.3);}
+.ct-leg{width:7px;height:22px;background:linear-gradient(to right,#cc2277,#ee4488,#cc2277);border-radius:3px;margin-top:0;}
+.ct-chairs{position:absolute;top:-20px;width:100%;display:flex;justify-content:space-around;}
+.ct-chair{
+  width:22px;height:18px;
+  background:linear-gradient(to bottom,#ffffff,#f0e8f4);
+  border:2px solid #ffaad0;border-radius:3px 3px 0 0;
+  position:relative;
+}
+.ct-chair::before{
+  content:'';width:26px;height:6px;
+  background:linear-gradient(to bottom,#ffffff,#ffe0f0);
+  border:2px solid #ffaad0;border-radius:2px;
+  position:absolute;bottom:-6px;left:-4px;
+}
+/* 테이블 위 소품 */
+.ct-props{position:absolute;top:-14px;left:50%;transform:translateX(-50%);display:flex;gap:4px;align-items:flex-end;}
+.ct-flower{width:8px;height:14px;position:relative;}
+.ct-flower-stem{width:2px;height:10px;background:#507020;border-radius:1px;margin:0 auto;}
+.ct-flower-head{width:8px;height:8px;background:radial-gradient(circle,#ff99cc,#ff4499);border-radius:50%;position:absolute;top:0;left:0;}
+.ct-cup-sm{width:10px;height:10px;background:linear-gradient(to bottom,#ffffff,#ffe0f0);border-radius:1px 1px 3px 3px;border:1px solid #ff99cc;}
+
+/* 손님 CSS 캐릭터 */
+.customer{
+  position:absolute;bottom:calc(46% + 44px);
+  display:flex;flex-direction:column;align-items:center;
+  transition:left 0.9s cubic-bezier(0.25,0.46,0.45,0.94);
+  z-index:12;
+}
+.customer.seated{
+  bottom:38%;
+  transition:all 0.7s;
+}
+.cust-wrap{display:flex;flex-direction:column;align-items:center;gap:0;position:relative;}
+/* CSS 말풍선 */
+.cust-bubble{
+  background:#fff;border:2.5px solid #555;border-radius:10px 10px 10px 2px;
+  padding:4px 10px;font-size:0.72rem;color:#333;white-space:nowrap;
+  margin-bottom:4px;box-shadow:2px 2px 0 rgba(0,0,0,0.2);
+  font-family:'Jua',sans-serif;position:relative;
+}
+.cust-bubble::after{content:'';position:absolute;bottom:-7px;left:6px;border:4px solid transparent;border-top-color:#fff;}
+
+/* CSS 캐릭터 몸체 */
+.css-char{width:44px;height:62px;position:relative;}
+/* 머리 */
+.char-head{
+  width:32px;height:30px;border-radius:50% 50% 40% 40%;
+  position:absolute;top:0;left:6px;
+  border:2px solid rgba(0,0,0,0.2);
+}
+/* 눈 */
+.char-eyes{position:absolute;top:10px;left:6px;display:flex;gap:8px;}
+.char-eye{width:5px;height:5px;background:#2a1800;border-radius:50%;position:relative;}
+.char-eye::after{content:'';width:2px;height:2px;background:rgba(255,255,255,0.6);border-radius:50%;position:absolute;top:0;left:0;}
+/* 입 */
+.char-mouth{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:10px;height:5px;border-bottom:2px solid #ff6699;border-radius:0 0 6px 6px;}
+/* 머리카락 */
+.char-hair{position:absolute;top:-3px;left:4px;right:4px;height:12px;border-radius:50% 50% 0 0;}
+/* 몸 */
+.char-body{
+  width:36px;height:28px;
+  position:absolute;bottom:0;left:4px;
+  border-radius:4px 4px 6px 6px;
+  border:2px solid rgba(0,0,0,0.2);
+}
+/* 팔 */
+.char-arm{width:10px;height:20px;border-radius:5px;position:absolute;border:2px solid rgba(0,0,0,0.15);}
+.char-arm.left{left:-8px;top:4px;}
+.char-arm.right{right:-8px;top:4px;}
+/* 다리 */
+.char-legs{position:absolute;bottom:-14px;left:6px;display:flex;gap:8px;}
+.char-leg{width:9px;height:14px;border-radius:2px 2px 4px 4px;border:1.5px solid rgba(0,0,0,0.2);}
+/* 인내심 바 */
+.patience-bar{
+  width:44px;height:5px;background:#fce0ec;border:1px solid #aa1166;
+  border-radius:3px;margin-top:3px;overflow:hidden;
+}
+.patience-fill{height:100%;border-radius:2px;transition:width 0.3s,background 0.5s;}
+
+/* CSS 바리스타 캐릭터 */
+#barista{
+  position:absolute;bottom:calc(46% + 44px);left:50%;transform:translateX(-50%);
+  z-index:15;display:flex;flex-direction:column;align-items:center;
+}
+.barista-char{width:48px;height:68px;position:relative;}
+.bar-head{
+  width:34px;height:32px;background:linear-gradient(135deg,#ffeeff,#ffddee);
+  border-radius:50%;position:absolute;top:0;left:7px;border:2px solid #d09050;
+}
+.bar-hair{
+  width:36px;height:16px;background:linear-gradient(to bottom,#f5aacc,#fce0ec);
+  border-radius:50% 50% 0 0;position:absolute;top:-2px;left:6px;
+}
+.bar-face{position:absolute;top:14px;left:7px;width:34px;display:flex;justify-content:space-around;}
+.bar-eye{width:5px;height:5px;background:#fce0ec;border-radius:50%;}
+.bar-eye::after{content:'';width:2px;height:2px;background:rgba(255,255,255,0.7);border-radius:50%;position:absolute;top:0;left:0;}
+.bar-mouth{width:12px;height:6px;border-bottom:2px solid #c07050;border-radius:0 0 6px 6px;position:absolute;top:20px;left:11px;}
+/* 모자 */
+.bar-hat{
+  width:38px;height:20px;
+  background:linear-gradient(to bottom,#ff70b0,#d04080);
+  border-radius:4px 4px 0 0;
+  position:absolute;top:-14px;left:5px;
+  border:2px solid #a01050;
+}
+.bar-hat::before{content:'';position:absolute;bottom:-3px;left:-4px;right:-4px;height:5px;background:linear-gradient(to bottom,#f05090,#d03070);border-radius:2px;}
+.bar-body2{
+  width:40px;height:30px;
+  background:linear-gradient(to bottom,#ffffff,#ffe8f4);
+  border-radius:4px 4px 6px 6px;border:2px solid #ff99cc;
+  position:absolute;bottom:0;left:4px;
+}
+.bar-apron{
+  width:28px;height:26px;
+  background:linear-gradient(to bottom,#ff60a0,#d03070);
+  border-radius:2px 2px 6px 6px;border:2px solid #a01050;
+  position:absolute;bottom:2px;left:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.6rem;color:rgba(255,255,255,0.7);
+}
+.bar-name{font-size:0.7rem;color:var(--pink);margin-top:3px;letter-spacing:1px;}
+
+/* 이펙트 */
+.fx-star{
+  position:absolute;pointer-events:none;
+  font-family:'Jua',sans-serif;font-size:1rem;
+  animation:fxStar 1s ease-out forwards;z-index:50;
+}
+@keyframes fxStar{0%{transform:translateY(0) scale(0.5);opacity:1;}100%{transform:translateY(-80px) scale(1.4);opacity:0;}}
+.fx-coin{
+  position:absolute;pointer-events:none;
+  width:18px;height:18px;
+  background:radial-gradient(circle,#ffe060,#c09000);
+  border-radius:50%;border:2px solid #a07000;
+  font-size:0.55rem;display:flex;align-items:center;justify-content:center;color:#cc1155;
+  animation:fxCoin 1.2s ease-out forwards;z-index:50;
+}
+@keyframes fxCoin{0%{transform:translate(0,0) rotate(0deg);opacity:1;}100%{transform:translate(var(--dx,0px),-70px) rotate(360deg);opacity:0;}}
+.fx-score{
+  position:absolute;pointer-events:none;
+  font-family:'Jua',sans-serif;font-size:0.9rem;color:var(--gold);
+  text-shadow:1px 1px 0 #cc1155;
+  animation:fxScore 1.2s ease-out forwards;z-index:50;
+}
+@keyframes fxScore{0%{transform:translateY(0);opacity:1;}100%{transform:translateY(-70px);opacity:0;}}
+.fx-heart{
+  position:absolute;pointer-events:none;font-size:1.1rem;
+  animation:fxHeart 0.8s ease-out forwards;z-index:50;
+}
+@keyframes fxHeart{0%{transform:translateY(0) scale(1);opacity:1;}100%{transform:translateY(-50px) scale(1.6);opacity:0;}}
+
+/* 씬 메시지 */
+#sceneMsg{
+  position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  background:rgba(255,255,255,0.92);border:1px solid var(--border2);border-radius:20px;
+  padding:5px 18px;font-size:0.75rem;color:var(--cream);
+  pointer-events:none;white-space:nowrap;z-index:20;color:var(--text);
+  opacity:0;transition:opacity 0.3s;font-family:'Nanum Gothic',sans-serif;
+}
+#sceneMsg.show{opacity:1;}
+
+/* ══════════════════════════════════════
+   RIGHT PANEL
+══════════════════════════════════════ */
+#rightPanel{
+  grid-row:1/3;grid-column:3;
+  background:#fdd0e4;border-left:3px solid var(--border2);
+  display:flex;flex-direction:column;overflow-y:auto;padding:10px;gap:8px;
+}
+#rightPanel::-webkit-scrollbar{width:4px;}
+#rightPanel::-webkit-scrollbar-track{background:var(--bg);}
+#rightPanel::-webkit-scrollbar-thumb{background:var(--border2);}
+
+.rp-card{
+  background:#ffffff;border:2px solid var(--border);border-radius:8px;padding:10px;
+}
+.rp-title{font-size:0.75rem;color:var(--gold);letter-spacing:2px;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border2);}
+
+/* 주문 목록 */
+.order-item{
+  background:#fdd0e4;border:2px solid var(--border2);border-radius:6px;
+  padding:7px 9px;margin-bottom:5px;cursor:pointer;
+  transition:all 0.15s;position:relative;overflow:hidden;
+}
+.order-item:hover{border-color:var(--amber);}
+.order-item.sel{border-color:var(--gold);background:#fdd0e4;}
+.order-item.urgent{border-color:var(--red);animation:urgentPulse 0.6s ease-in-out infinite alternate;}
+@keyframes urgentPulse{from{background:#fdd0e4}to{background:#fdd0e4}}
+.oi-top{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+.oi-art{width:26px;height:26px;flex-shrink:0;}
+.oi-info{flex:1;}
+.oi-name{font-size:0.75rem;color:var(--text);font-weight:700;}
+.oi-who{font-size:0.62rem;color:var(--text);font-family:'Nanum Gothic',sans-serif;}
+.oi-price{font-size:0.65rem;color:var(--gold);font-weight:700;}
+.oi-pbar{height:3px;background:#fdd0e4;border-radius:2px;overflow:hidden;}
+.oi-pfill{height:100%;border-radius:2px;transition:width 0.5s,background 0.5s;}
+/* 치지직 도네이션 주문 특별 표시 */
+.order-item.donation{border-color:var(--purple);}
+.oi-chzzk-badge{
+  background:linear-gradient(135deg,#7a20c0,#5010a0);
+  border-radius:8px;padding:1px 6px;font-size:0.58rem;color:#d0a0ff;
+  margin-left:auto;white-space:nowrap;
+}
+
+/* 레시피 */
+.recipe-row{display:flex;align-items:center;gap:5px;margin-bottom:4px;padding:4px 6px;border-radius:5px;background:rgba(255,255,255,0.5);}
+.recipe-row.locked{opacity:0.5;pointer-events:none;}
+.recipe-row.discovered{background:rgba(255,0,100,0.06);border-left:2px solid var(--pink);}
+/* 발견 배너 */
+.discovery-banner{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.8);
+  background:linear-gradient(135deg,#ffffff,#fff0f8);
+  border:2px solid var(--pink);border-radius:14px;
+  padding:14px 28px;font-family:'Jua',sans-serif;font-size:1rem;
+  color:var(--cream);text-align:center;
+  box-shadow:0 0 40px rgba(255,120,176,0.4);
+  opacity:0;transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events:none;z-index:30;white-space:nowrap;
+}
+.discovery-banner.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
+.rr-art{width:22px;height:22px;flex-shrink:0;}
+.rr-name{font-size:0.7rem;color:var(--text);flex:1;font-weight:700;}
+.rr-ing{font-size:0.58rem;color:var(--text);font-family:'Nanum Gothic',sans-serif;}
+.rr-price{font-size:0.62rem;color:var(--gold2);font-weight:700;}
+
+/* 업그레이드 */
+.upg-btn{
+  width:100%;background:#fdd0e4;border:2px solid var(--border2);border-radius:6px;
+  padding:8px 9px;cursor:pointer;font-family:'Jua',sans-serif;color:var(--text);
+  text-align:left;display:flex;align-items:center;gap:7px;margin-bottom:5px;
+  transition:all 0.15s;
+}
+.upg-btn:not(:disabled):hover{border-color:var(--gold);background:#fdd0e4;}
+.upg-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.upg-icon{font-size:1.1rem;}
+.upg-info{flex:1;}
+.upg-name{font-size:0.75rem;color:var(--text);font-weight:700;}
+.upg-desc{font-size:0.6rem;color:var(--text);font-family:'Nanum Gothic',sans-serif;}
+.upg-cost{font-size:0.72rem;color:var(--gold);white-space:nowrap;}
+
+/* ══════════════════════════════════════
+   BOTTOM CRAFT PANEL
+══════════════════════════════════════ */
+#craftPanel{
+  grid-row:2;grid-column:2;
+  background:#fdd0e4;border-top:3px solid var(--border2);
+  display:flex;align-items:center;gap:0;overflow-x:auto;padding:0;
+}
+.cp-section{padding:10px 12px;border-right:2px solid var(--border2);flex-shrink:0;}
+.cp-label{font-size:0.65rem;color:var(--gold);letter-spacing:2px;margin-bottom:7px;display:block;}
+.cp-btns{display:flex;gap:5px;}
+
+/* 브루 슬롯 */
+.brew-wrap{padding:10px 12px;border-right:2px solid var(--border2);}
+.brew-slots-row{display:flex;gap:6px;}
+.brew-slot{
+  width:70px;height:70px;background:#fdd0e4;
+  border:2px solid var(--border2);border-radius:8px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;cursor:pointer;transition:all 0.15s;
+  gap:3px;
+}
+.brew-slot:hover{border-color:var(--amber);}
+.brew-slot.active{border-color:var(--green);background:#081200;}
+.brew-slot.done{border-color:var(--gold);animation:brewDone 0.5s ease-in-out infinite alternate;}
+@keyframes brewDone{from{background:#fdd0e4}to{background:#fdd0e4}}
+.bs-art{width:36px;height:36px;position:relative;}
+.bs-label{font-size:0.58rem;color:var(--text);}
+.bs-progbar{position:absolute;bottom:3px;left:4px;right:4px;height:4px;background:#fdd0e4;border-radius:2px;overflow:hidden;}
+.bs-progfill{height:100%;background:var(--green);border-radius:2px;transition:width 0.25s;}
+.bs-done-badge{
+  position:absolute;top:-6px;right:-6px;width:16px;height:16px;
+  background:var(--gold);border-radius:50%;
+  font-size:0.6rem;color:#fde8f0;display:flex;align-items:center;justify-content:center;
+}
+.bs-empty{font-size:0.68rem;color:#cc3377;text-align:center;line-height:1.3;}
+
+
+/* ── 제조 중 음료 채워지는 애니메이션 ── */
+.brew-cup-wrap{
+  width:44px;height:56px;position:relative;
+  display:flex;flex-direction:column;align-items:center;
+}
+.brew-cup-body{
+  width:36px;height:40px;
+  background:#ffffff;
+  border-radius:3px 3px 8px 8px;
+  border:2px solid var(--border);
+  position:absolute;bottom:0;left:4px;
+  overflow:hidden;
+}
+.brew-cup-fill{
+  position:absolute;bottom:0;left:0;right:0;
+  background:var(--fill-col,#c8a878);
+  border-radius:0 0 6px 6px;
+  height:0%;
+  animation:fillUp var(--brew-dur,3s) linear forwards;
+}
+.brew-cup-foam{
+  position:absolute;top:0;left:0;right:0;height:6px;
+  background:rgba(255,255,255,0.7);border-radius:3px;
+  opacity:0;animation:foamAppear var(--brew-dur,3s) linear forwards;
+}
+.brew-cup-bubbles{
+  position:absolute;bottom:2px;left:0;right:0;
+  display:flex;justify-content:space-around;align-items:flex-end;
+}
+.brew-bubble{
+  width:5px;height:5px;background:rgba(255,255,255,0.5);border-radius:50%;
+  animation:bubbleRise var(--bd,1.2s) ease-in infinite;
+  animation-delay:var(--bdelay,0s);
+}
+.brew-cup-handle{
+  width:10px;height:16px;
+  border:2px solid var(--border);border-left:none;
+  border-radius:0 8px 8px 0;
+  position:absolute;right:-2px;top:10px;
+}
+.brew-cup-steam-wrap{
+  display:flex;gap:5px;margin-bottom:2px;
+  height:14px;align-items:flex-end;
+}
+.brew-steam{
+  width:3px;background:linear-gradient(to top,rgba(180,150,140,0.7),transparent);
+  border-radius:2px;
+  animation:steamRise var(--sd,1.5s) ease-in-out infinite;
+  animation-delay:var(--sdelay,0s);
+}
+.brew-label{
+  font-size:0.55rem;color:var(--text2);text-align:center;
+  margin-top:2px;line-height:1.2;
+}
+@keyframes fillUp{
+  0%{height:0%;}
+  80%{height:85%;}
+  100%{height:90%;}
+}
+@keyframes foamAppear{
+  0%,70%{opacity:0;}
+  100%{opacity:1;}
+}
+@keyframes bubbleRise{
+  0%{transform:translateY(0);opacity:0.7;}
+  100%{transform:translateY(-20px);opacity:0;}
+}
+
+/* ── 드래그앤드롭 ── */
+.ing-btn[draggable]{cursor:grab;}
+.ing-btn[draggable]:active{cursor:grabbing;}
+.ing-btn.dragging{opacity:0.4;transform:scale(0.92);}
+.brew-slot.drag-over{
+  border-color:var(--gold)!important;background:#201400!important;
+  box-shadow:0 0 16px rgba(245,200,66,0.4);
+  transform:scale(1.06);
+}
+/* 드래그 고스트 커스텀 */
+#dragGhost{
+  position:fixed;pointer-events:none;z-index:9998;
+  background:var(--panel3);border:2px solid var(--gold);border-radius:10px;
+  padding:6px 10px;font-family:'Jua',sans-serif;font-size:0.8rem;color:var(--gold);
+  display:flex;align-items:center;gap:6px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.6);
+  opacity:0;transition:opacity 0.1s;
+}
+/* 주문 카드 드롭 가능 표시 */
+.order-item.drop-target{border-color:var(--purple)!important;background:#1a0828!important;}
+/* 완성 음료 드래그 */
+.brew-slot.done[draggable]{cursor:grab;}
+.brew-slot.done.dragging{opacity:0.5;}
+
+/* 서빙 버튼 영역 */
+.serve-area{padding:10px 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;flex-shrink:0;}
+.btn-serve{
+  background:linear-gradient(to bottom,#1aaa55,#107030);
+  border:2px solid #0a5020;border-radius:8px;
+  padding:10px 20px;font-family:'Jua',sans-serif;font-size:1rem;
+  color:#fff;cursor:pointer;letter-spacing:2px;
+  box-shadow:0 4px 0 #104820,0 0 15px rgba(61,184,90,0.2);
+  transition:all 0.1s;white-space:nowrap;
+}
+.btn-serve:hover{transform:translateY(-2px);box-shadow:0 6px 0 #104820,0 0 20px rgba(61,184,90,0.3);}
+.btn-serve:active{transform:translateY(4px);box-shadow:none;}
+
+/* ── 쓰레기통 ── */
+#trashBin{
+  width:58px;height:58px;
+  background:#ffffff;
+  border:2px solid rgba(238,34,119,0.3);
+  border-radius:10px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;transition:all 0.2s;flex-shrink:0;
+  position:relative;
+}
+#trashBin:hover{border-color:var(--red);background:#fff5f5;transform:scale(1.05);}
+#trashBin.drag-over{
+  border-color:var(--red)!important;
+  background:#ffeeee!important;
+  transform:scale(1.12);
+  box-shadow:0 0 16px rgba(220,0,0,0.25);
+}
+#trashBin.shake{animation:trashShake 0.4s ease-in-out;}
+@keyframes trashShake{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+.trash-icon{font-size:1.5rem;line-height:1;transition:transform 0.2s;}
+#trashBin:hover .trash-icon{transform:scale(1.15) rotate(-5deg);}
+.trash-label{font-size:0.55rem;color:#cc3333;font-family:'Nanum Gothic',sans-serif;margin-top:2px;}
+
+.serve-hint{font-size:0.62rem;color:var(--text);font-family:'Nanum Gothic',sans-serif;text-align:center;}
+
+/* ══════════════════════════════════════
+   치지직 도네이션 팝업
+══════════════════════════════════════ */
+#donationPopup{
+  position:fixed;inset:0;z-index:9998;
+  background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);
+  display:none;align-items:center;justify-content:center;
+}
+#donationPopup.show{display:flex;}
+
+.don-box{
+  background:linear-gradient(135deg,#ffffff,#fff0f8);
+  border:3px solid var(--purple);border-radius:16px;
+  padding:24px 28px;max-width:480px;width:92%;
+  box-shadow:0 0 60px rgba(136,85,204,0.3),0 20px 60px rgba(0,0,0,0.5);
+  position:relative;overflow:hidden;
+}
+.don-box::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(136,85,204,0.12),transparent 60%);
+  pointer-events:none;
+}
+.don-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+/* CSS 치지직 로고 스타일 뱃지 */
+.don-chzzk-logo{
+  width:38px;height:38px;
+  background:linear-gradient(135deg,#8b2fc9,#5010a0);
+  border:2px solid #a050e0;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.75rem;color:#f0e0ff;font-weight:800;letter-spacing:-1px;
+  box-shadow:0 0 12px rgba(136,85,204,0.4);
+  flex-shrink:0;
+}
+.don-title-wrap{}
+.don-alert{font-size:0.65rem;color:#b090e0;letter-spacing:3px;margin-bottom:2px;}
+.don-sender{font-size:1.1rem;color:var(--cream);letter-spacing:1px;}
+.don-amount-badge{
+  margin-left:auto;background:linear-gradient(135deg,#7a20c0,#5010a0);
+  border:2px solid #a050e0;border-radius:10px;padding:6px 14px;
+  font-size:1rem;color:var(--gold);font-family:'Jua',sans-serif;
+  box-shadow:0 0 10px rgba(136,85,204,0.3);flex-shrink:0;
+}
+.don-msg-wrap{
+  background:rgba(238,34,119,0.05);border:1px solid rgba(238,34,119,0.2);
+  border-radius:8px;padding:10px 14px;margin-bottom:16px;
+  font-family:'Nanum Gothic',sans-serif;font-size:0.85rem;color:var(--cream);
+  line-height:1.6;
+}
+.don-order-title{font-size:0.72rem;color:#b090e0;letter-spacing:2px;margin-bottom:10px;}
+/* 음료 선택 카드들 */
+.don-drinks{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:16px;}
+.don-drink-card{
+  background:#fff0f8;border:2px solid var(--border2);border-radius:10px;
+  padding:10px 6px;cursor:pointer;text-align:center;transition:all 0.15s;
+}
+.don-drink-card:hover{border-color:var(--purple);transform:translateY(-2px);}
+.don-drink-card.sel{border-color:var(--gold);background:#fce0ec;}
+.ddc-art{width:36px;height:36px;margin:0 auto 5px;position:relative;}
+.ddc-name{font-size:0.65rem;color:var(--cream);}
+.ddc-price{font-size:0.58rem;color:var(--gold);}
+.don-actions{display:flex;gap:8px;}
+.btn-don-confirm{
+  flex:1;background:linear-gradient(135deg,#8b2fc9,#5010a0);
+  border:2px solid #a050e0;border-radius:8px;
+  padding:11px;font-family:'Jua',sans-serif;font-size:0.95rem;
+  color:#f0e0ff;cursor:pointer;letter-spacing:1px;transition:all 0.15s;
+  box-shadow:0 0 15px rgba(136,85,204,0.2);
+}
+.btn-don-confirm:hover{background:linear-gradient(135deg,#ff4499,#6b20b0);box-shadow:0 0 25px rgba(136,85,204,0.4);}
+.btn-don-cancel{
+  background:var(--panel3);border:2px solid var(--border2);border-radius:8px;
+  padding:11px 18px;font-family:'Jua',sans-serif;font-size:0.85rem;
+  color:var(--text2);cursor:pointer;transition:all 0.15s;
+}
+.btn-don-cancel:hover{border-color:var(--border);}
+
+/* 도네이션 알림 토스트 */
+.don-toast{
+  position:fixed;top:70px;right:16px;z-index:6000;
+  background:linear-gradient(135deg,#ffffff,#fff0f8);
+  border:2px solid var(--purple);border-radius:12px;
+  padding:12px 18px;min-width:240px;
+  box-shadow:0 8px 30px rgba(136,85,204,0.3);
+  animation:donToastIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  font-family:'Nanum Gothic',sans-serif;
+}
+@keyframes donToastIn{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.dt-top{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.dt-icon{width:22px;height:22px;background:linear-gradient(135deg,#8b2fc9,#5010a0);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:#e0c0ff;}
+.dt-who{font-size:0.8rem;color:var(--text);font-weight:700;}
+.dt-amount{font-size:0.75rem;color:var(--gold);margin-left:auto;}
+.dt-msg{font-size:0.72rem;color:var(--text2);line-height:1.4;}
+
+/* 데이 엔드 */
+#dayEndScreen{
+  position:fixed;inset:0;z-index:5000;
+  background:rgba(0,0,0,0.88);backdrop-filter:blur(5px);
+  display:none;align-items:center;justify-content:center;
+}
+#dayEndScreen.show{display:flex;}
+.de-box{
+  background:#ffffff;border:3px solid var(--gold);border-radius:16px;
+  padding:32px 40px;text-align:center;min-width:340px;
+  box-shadow:0 0 80px rgba(245,200,66,0.15),0 20px 60px rgba(0,0,0,0.5);
+}
+.de-title{font-size:1.6rem;color:var(--gold);letter-spacing:3px;margin-bottom:8px;}
+.de-grade{font-size:2.4rem;margin:10px 0;}
+.de-stats{
+  font-family:'Nanum Gothic',sans-serif;font-size:0.85rem;
+  color:var(--text);line-height:2.2;margin-bottom:20px;
+  background:rgba(0,0,0,0.3);border-radius:8px;padding:12px;text-align:left;
+}
+.de-stats strong{color:var(--gold);}
+.de-stats .chzzk-line{color:#c090f0;}
+.btn-de{
+  background:linear-gradient(to bottom,var(--gold),var(--gold2));
+  border:3px solid #bb1155;border-radius:10px;
+  padding:14px 48px;font-family:'Jua',sans-serif;font-size:1.2rem;
+  color:#fde8f0;cursor:pointer;letter-spacing:3px;
+  box-shadow:0 5px 0 #cc1166;transition:all 0.1s;
+}
+.btn-de:hover{transform:translateY(-2px);}
+.btn-de:active{transform:translateY(5px);box-shadow:none;}
+
+
+/* 일시정지 오버레이 */
+#pauseOverlay{
+  position:absolute;inset:0;z-index:100;
+  background:rgba(253,232,240,0.92);backdrop-filter:blur(4px);
+  display:none;align-items:center;justify-content:center;
+  pointer-events:none;
+}
+#pauseOverlay.show{display:flex;}
+.pause-sign{
+  font-family:'Jua',sans-serif;font-size:2.2rem;color:var(--gold);
+  letter-spacing:6px;text-shadow:0 0 20px rgba(255,120,176,0.5);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.pause-sign small{font-size:0.85rem;color:var(--text2);letter-spacing:2px;}
+
+/* GAME OVER */
+#gameOverScreen{
+  position:fixed;inset:0;z-index:5000;
+  background:rgba(0,0,0,0.92);backdrop-filter:blur(5px);
+  display:none;align-items:center;justify-content:center;
+}
+#gameOverScreen.show{display:flex;}
+
+/* 스크롤바 */
+#craftPanel::-webkit-scrollbar{height:4px;}
+#craftPanel::-webkit-scrollbar-track{background:var(--bg);}
+#craftPanel::-webkit-scrollbar-thumb{background:var(--border2);}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ TITLE SCREEN ══════════════ -->
+<div id="titleScreen">
+  <div class="ts-stars" id="tsStars"></div>
+
+  <!-- 간판 폴 + 보드 -->
+  <div class="ts-signage">
+    <div class="ts-sign-hooks"><div class="ts-sh"></div><div class="ts-sh"></div></div>
+    <div class="ts-sign-board">
+      <!-- 리본 왕관 장식 -->
+      <div class="ts-sign-ribbon">
+        <div class="tsr-loop tsr-loop--l"></div>
+        <div class="tsr-knot"></div>
+        <div class="tsr-loop tsr-loop--r"></div>
+        <div class="tsr-tail tsr-tail--l"></div>
+        <div class="tsr-tail tsr-tail--r"></div>
+      </div>
+      <div class="ts-sign-title">메이드 카페</div>
+      <div class="ts-sign-sub">✦ MAID CAFÉ ✦</div>
+      <div class="ts-sign-divider"><span></span><span class="ts-sd-dot"></span><span></span></div>
+      <div class="ts-sign-tagline">재료를 조합해 최고의 음료를 만들어보세요!</div>
+    </div>
+    <div class="ts-sign-pole"></div>
+  </div>
+
+  <!-- 정보 패널 3개 (타이쿤 느낌) -->
+  <div class="ts-info-row">
+    <div class="ts-info-box">
+      <div class="ts-ib-icon">☕</div>
+      <div class="ts-ib-label">레시피</div>
+      <div class="ts-ib-val">16종</div>
+    </div>
+    <div class="ts-info-box ts-ib-center">
+      <div class="ts-ib-icon">👩</div>
+      <div class="ts-ib-label">7일 영업</div>
+      <div class="ts-ib-val">타이쿤</div>
+    </div>
+    <div class="ts-info-box">
+      <div class="ts-ib-icon">💜</div>
+      <div class="ts-ib-label">치지직</div>
+      <div class="ts-ib-val">연동</div>
+    </div>
+  </div>
+
+  <!-- 버튼 -->
+  <div class="ts-btns">
+    <button class="ts-btn-main" onclick="directStart()">▶ 게임 시작!</button>
+    <button class="ts-btn-sub" onclick="showChzzkSetup()">💜 치지직 연동</button>
+  </div>
+  <div class="ts-hint">클릭/드래그로 재료 선택 · Space 서빙 · P 일시정지</div>
+</div>
+
+<!-- ══════════════ CHZZK SETUP ══════════════ -->
+<div id="chzzkModal">
+  <div class="chzzk-box" style="max-width:400px;">
+    <div class="chzzk-title">
+      <div class="chzzk-badge-sm">치지직</div>
+      도네이션 연동
+    </div>
+
+    <!-- 메인 입력 화면 -->
+    <div id="chzzkMain">
+      <div class="chzzk-desc" style="margin-bottom:14px;">
+        채널 UID 입력 후 치지직 로그인 버튼을 누르세요.<br>
+        <span style="color:var(--text2);font-size:0.72rem;">
+          💡 UID: chzzk.naver.com/<b>여기 32자리 코드</b>
+        </span>
+      </div>
+      <div class="chzzk-input-wrap">
+        <div class="chzzk-label">내 채널 UID</div>
+        <input class="chzzk-input" id="chzzkChannelId"
+          placeholder="예) 9a8b7c6d5e4f3a2b1c0d..." autocomplete="off"
+          style="font-size:0.82rem;"
+          onkeydown="if(event.key==='Enter')startOAuthFromModal()"/>
+      </div>
+      <!-- 바로 로그인 버튼 -->
+      <button onclick="startOAuthFromModal()" style="
+        background:linear-gradient(135deg,#ee2277,#aa0055);
+        border:none;border-radius:10px;width:100%;
+        padding:13px;font-family:'Jua',sans-serif;font-size:1rem;
+        color:#fff;cursor:pointer;letter-spacing:2px;
+        box-shadow:0 4px 16px rgba(238,34,119,0.25);
+        transition:all 0.15s;margin-top:10px;margin-bottom:8px;
+      ">🎀 치지직 로그인</button>
+
+      <!-- 직접 입력 토글 -->
+      <details style="margin-top:4px;">
+        <summary style="font-size:0.7rem;color:var(--text2);font-family:'Nanum Gothic',sans-serif;cursor:pointer;padding:4px 0;">
+          🔑 Access Token 직접 입력 (고급)
+        </summary>
+        <div style="margin-top:8px;">
+          <input class="chzzk-input" id="chzzkAccessTokenManual" type="password"
+            placeholder="Access Token 붙여넣기..." autocomplete="off"/>
+          <button onclick="connectWithToken()" style="
+            width:100%;margin-top:6px;padding:9px;
+            background:#fff;border:1.5px solid var(--border);border-radius:8px;
+            font-family:'Jua',sans-serif;font-size:0.85rem;color:var(--gold2);cursor:pointer;
+          ">토큰으로 연결</button>
+        </div>
+      </details>
+    </div>
+
+    <!-- 연결 완료 화면 -->
+    <div id="chzzkDone" style="display:none;text-align:center;padding:12px 0 8px;">
+      <div style="font-size:2.4rem;margin-bottom:8px;">🎀</div>
+      <div style="font-size:1.1rem;color:var(--green);font-weight:700;margin-bottom:6px;" id="chzzkConnMsg">연결 완료!</div>
+      <div style="font-size:0.8rem;color:var(--text);font-family:'Nanum Gothic',sans-serif;line-height:1.8;margin-bottom:14px;" id="chzzkConnDetail"></div>
+      <div style="background:rgba(238,34,119,0.05);border:1px solid rgba(238,34,119,0.2);border-radius:8px;padding:10px 12px;text-align:left;">
+        <div style="font-size:0.72rem;color:var(--text2);font-family:'Nanum Gothic',sans-serif;margin-bottom:6px;">
+          💬 채팅 !주문 허용 닉네임
+        </div>
+        <input class="chzzk-input" id="chatOrderUserInput"
+          placeholder="냐피카" value="냐피카" style="font-size:0.85rem;"
+          oninput="CHZZK.chatOrderUser=this.value.trim();"/>
+      </div>
+    </div>
+
+    <!-- 호환용 숨김 요소 -->
+    <div id="chzzkStep1" style="display:none;"></div>
+    <div id="chzzkStep2" style="display:none;"></div>
+    <div id="chzzkStep3" style="display:none;"></div>
+    <div id="step1btn" style="display:none;"></div>
+    <div id="step2btn" style="display:none;"></div>
+    <div id="step3btn" style="display:none;"></div>
+
+    <div class="chzzk-status" id="chzzkStatus"></div>
+    <div class="chzzk-buttons">
+      <button class="btn-chzzk-skip" onclick="closeChzzkModal()">✕ 닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ HUD ══════════════ -->
+<div id="hud" style="display:none">
+  <div class="hud-logo">🎀 메이드 카페</div>
+  <div class="hud-stats">
+    <div class="hud-stat"><span class="hs-icon">💰</span><span class="hs-val" id="hudMoney">0</span>원</div>
+    <div class="hud-stat"><span class="hs-icon">⭐</span><span class="hs-val" id="hudScore">0</span></div>
+    <div class="hud-stat"><span class="hs-icon">😊</span><span class="hs-val" id="hudHappy">100</span>%</div>
+    <div class="hud-stat"><span class="hs-icon">🎀</span>도네 <span class="hs-val" id="hudDon">0</span>건</div>
+  </div>
+  <div class="hud-timer-wrap">
+    <span class="hud-timer-label" id="hudDay">DAY 1</span>
+    <div id="timerBar"><div id="timerFill"></div></div>
+  </div>
+  <div class="hud-day" id="hudTimeLeft">90s</div>
+  <!-- 일시정지 버튼 -->
+  <button id="pauseBtn" onclick="togglePause()" title="일시정지 (P)" style="
+    background:linear-gradient(135deg,var(--panel2),var(--panel3));
+    border:2px solid var(--border2);border-radius:7px;
+    padding:5px 12px;font-family:'Jua',sans-serif;font-size:0.82rem;
+    color:var(--text);cursor:pointer;transition:all 0.15s;
+    display:flex;align-items:center;gap:5px;white-space:nowrap;
+    margin:0 4px;
+  ">⏸ 일시정지</button>
+  <div class="hud-chzzk" onclick="showChzzkSetup()" title="치지직 설정">
+    <div class="hud-chzzk-dot" id="chzzkDot"></div>
+    <span id="chzzkConnLabel" style="font-size:0.7rem;color:#88ccff;">치지직</span>
+  </div>
+</div>
+
+<!-- ══════════════ GAME WRAP ══════════════ -->
+<div id="gameWrap" style="display:none">
+
+  <!-- ── LEFT PANEL ── -->
+  <div id="leftPanel">
+    <div class="lp-header">
+      <div class="lp-title">🧪 재료 선택</div>
+      <div class="cat-tabs" id="catTabs"></div>
+    </div>
+    <div class="ing-grid" id="ingGrid"></div>
+    <div class="selected-area">
+      <div class="sa-title">선택된 재료 (클릭으로 제거)</div>
+      <div class="sa-tags" id="saTags"><span class="sa-empty">재료를 선택하세요</span></div>
+    </div>
+  </div>
+
+  <!-- ── CENTER SCENE ── -->
+  <div id="cafeScene">
+    <!-- 배경 -->
+    <div class="scene-wall"></div>
+    <div class="scene-floor"></div>
+    <!-- 창문 -->
+    <div class="css-window">
+      <div class="cw-frame">
+        <div class="cw-cross-h"></div><div class="cw-cross-v"></div>
+        <div class="cw-light"></div>
+      </div>
+      <div class="cw-sill"></div>
+    </div>
+    <!-- 가로등 -->
+    <div class="css-lamp">
+      <div class="lamp-head"></div>
+      <div class="lamp-glow"></div>
+      <div class="lamp-arm"></div>
+      <div class="lamp-pole"></div>
+    </div>
+    <!-- 메뉴 보드 -->
+    <div class="css-menuboard">
+      <div class="mb-title">MENU</div>
+      <div class="mb-item"><span>아메리카노</span><span>1,500</span></div>
+      <div class="mb-item"><span>카페라떼</span><span>2,000</span></div>
+      <div class="mb-item"><span>카페모카</span><span>2,500</span></div>
+      <div class="mb-item"><span>말차라떼</span><span>2,500</span></div>
+      <div class="mb-item"><span>Special✦</span><span>3,500↑</span></div>
+    </div>
+    <!-- 선반 -->
+    <div class="css-shelf"></div>
+    <div class="shelf-cups"><div class="shelf-cup"></div><div class="shelf-cup"></div><div class="shelf-cup"></div></div>
+    <!-- 쇼케이스 -->
+    <div class="css-showcase">
+      <div class="sc-glass">
+        <div class="sc-cake"><div class="scc-body"></div><div class="scc-cream"></div></div>
+        <div class="sc-macarons"><div class="sc-mac sc-mac1"></div><div class="sc-mac sc-mac2"></div><div class="sc-mac sc-mac3"></div></div>
+      </div>
+      <div class="sc-base"></div>
+    </div>
+    <!-- 에스프레소 머신 -->
+    <div class="css-machine">
+      <div class="mach-steam-wrap"><div class="mach-sl"></div><div class="mach-sl"></div><div class="mach-sl"></div></div>
+      <div class="mach-body">
+        <div class="mach-screen"></div>
+        <div class="mach-btn mach-btn1"></div>
+        <div class="mach-btn mach-btn2"></div>
+        <div class="mach-btn mach-btn3"></div>
+        <div class="mach-nozzle"></div>
+      </div>
+    </div>
+    <!-- 카운터 -->
+    <div class="scene-counter"><div class="counter-top"></div><div class="counter-body"></div></div>
+    <!-- 테이블들 -->
+    <div class="css-table" id="table0" style="left:28px">
+      <div class="ct-chairs"><div class="ct-chair"></div><div class="ct-chair"></div></div>
+      <div class="ct-surface"></div><div class="ct-leg"></div>
+      <div class="ct-props"><div class="ct-flower"><div class="ct-flower-stem"></div><div class="ct-flower-head"></div></div><div class="ct-cup-sm"></div></div>
+    </div>
+    <div class="css-table" id="table1" style="left:160px">
+      <div class="ct-chairs"><div class="ct-chair"></div><div class="ct-chair"></div></div>
+      <div class="ct-surface"></div><div class="ct-leg"></div>
+      <div class="ct-props"><div class="ct-flower"><div class="ct-flower-stem"></div><div class="ct-flower-head" style="background:radial-gradient(circle,#ff80b0,#e04080)"></div></div></div>
+    </div>
+    <div class="css-table" id="table2" style="left:292px">
+      <div class="ct-chairs"><div class="ct-chair"></div><div class="ct-chair"></div></div>
+      <div class="ct-surface"></div><div class="ct-leg"></div>
+      <div class="ct-props"><div class="ct-cup-sm"></div><div class="ct-cup-sm" style="background:linear-gradient(to bottom,#e0f0ff,#c0d8f0)"></div></div>
+    </div>
+    <!-- 바리스타 -->
+    <div id="barista">
+      <div class="barista-char">
+        <div class="bar-hair"></div>
+        <div class="bar-head">
+          <div class="bar-hat"></div>
+        </div>
+        <div class="bar-body2">
+          <div class="bar-apron">🎀</div>
+        </div>
+      </div>
+      <div class="bar-name">🎀 메이드장</div>
+    </div>
+    <!-- 일시정지 오버레이 -->
+    <div id="pauseOverlay"><div class="pause-sign">⏸ 일시정지<small>P키 또는 버튼으로 재개</small></div></div>
+    <!-- 씬 메시지 -->
+    <div id="sceneMsg"></div>
+  </div>
+
+  <!-- ── RIGHT PANEL ── -->
+  <div id="rightPanel">
+    <div class="rp-card">
+      <div class="rp-title">📋 주문 대기</div>
+      <div id="orderList"><div style="color:#cc3377;font-size:0.73rem;font-family:'Nanum Gothic',sans-serif;">손님을 기다리는 중...</div></div>
+    </div>
+    <div class="rp-card">
+      <div class="rp-title">📖 레시피북</div>
+      <div id="recipeNotice" style="font-size:0.65rem;color:var(--border2);font-family:'Nanum Gothic',sans-serif;margin-bottom:6px;padding:4px 6px;background:var(--bg);border-radius:4px;"></div>
+      <div id="recipeList"></div>
+    </div>
+    <div class="rp-card">
+      <div class="rp-title">⬆ 업그레이드</div>
+      <div id="upgradeList"></div>
+    </div>
+  </div>
+
+  <!-- ── CRAFT PANEL ── -->
+  <div id="craftPanel">
+    <div class="cp-section">
+      <span class="cp-label">☕ 베이스</span>
+      <div class="cp-btns" id="cpBase"></div>
+    </div>
+    <div class="cp-section">
+      <span class="cp-label">🍯 시럽</span>
+      <div class="cp-btns" id="cpSyrup"></div>
+    </div>
+    <div class="cp-section">
+      <span class="cp-label">🍥 토핑</span>
+      <div class="cp-btns" id="cpTopping"></div>
+    </div>
+    <div class="brew-wrap">
+      <span class="cp-label" style="display:block;margin-bottom:7px;font-size:0.65rem;color:var(--gold);letter-spacing:2px;">⚗ 제조</span>
+      <div class="brew-slots-row" id="brewSlots"></div>
+    </div>
+    <div class="serve-area">
+      <button class="btn-serve" onclick="serveOrder()">🚀 서빙!</button>
+      <div class="serve-hint">Space: 서빙 / Enter: 제조</div>
+      <!-- 쓰레기통 -->
+      <div id="trashBin"
+        title="완성된 음료 버리기 (드래그 or 클릭)"
+        onclick="trashSelected()"
+        ondragover="onTrashDragOver(event)"
+        ondragleave="onTrashDragLeave(event)"
+        ondrop="onTrashDrop(event)">
+        <div class="trash-icon">🗑️</div>
+        <div class="trash-label">버리기</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /gameWrap -->
+
+<!-- 드래그 고스트 -->
+<div id="dragGhost"><span id="dgArt"></span><span id="dgName"></span></div>
+
+<!-- ══════════════ DONATION POPUP ══════════════ -->
+<div id="donationPopup">
+  <div class="don-box">
+    <div class="don-header">
+      <div class="don-chzzk-logo">치지직</div>
+      <div class="don-title-wrap">
+        <div class="don-alert">도네이션 주문 도착!</div>
+        <div class="don-sender" id="donSender">시청자닉네임</div>
+      </div>
+      <div class="don-amount-badge" id="donAmount">2,000원</div>
+    </div>
+    <div class="don-msg-wrap" id="donMsg">음료 주문할게요~!</div>
+    <div class="don-order-title">☕ 주문할 음료를 선택하세요</div>
+    <div class="don-drinks" id="donDrinks"></div>
+    <div class="don-actions">
+      <button class="btn-don-confirm" onclick="confirmDonation()">✓ 주문 확정</button>
+      <button class="btn-don-cancel" onclick="closeDonation()">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ DAY END ══════════════ -->
+<div id="dayEndScreen">
+  <div class="de-box">
+    <div class="de-title" id="deTitle">오늘 영업 종료!</div>
+    <div class="de-grade" id="deGrade">⭐⭐⭐</div>
+    <div class="de-stats" id="deStats"></div>
+    <button class="btn-de" id="deBtn">다음 날 ▶</button>
+  </div>
+</div>
+
+<!-- GAME OVER -->
+<div id="gameOverScreen">
+  <div class="de-box" style="border-color:var(--red)">
+    <div class="de-title" style="color:var(--red)">💀 폐업 위기!</div>
+    <div class="de-grade">😰</div>
+    <div class="de-stats" id="goStats"></div>
+    <button class="btn-de" style="background:linear-gradient(to bottom,#d63030,#a02020);color:#fff;border-color:#800000" onclick="location.reload()">🔄 다시 시작</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════
+   DATA
+═══════════════════════════════════ */
+const CATS = ['베이스','시럽','토핑'];
+const INGREDIENTS = {
+  베이스:[
+    {id:'espresso',name:'에스프레소',art:'art-espresso',time:2},
+    {id:'milk',name:'우유',art:'art-milk',time:1},
+    {id:'water',name:'물',art:'art-water',time:0.5},
+    {id:'oatmilk',name:'귀리우유',art:'art-oat',time:1},
+    {id:'coconut',name:'코코넛밀크',art:'art-coconut',time:1},
+  ],
+  시럽:[
+    {id:'vanilla',name:'바닐라',art:'art-vanilla',time:0.5},
+    {id:'caramel',name:'카라멜',art:'art-caramel',time:0.5},
+    {id:'matcha',name:'말차',art:'art-matcha',time:0.8},
+    {id:'choco',name:'초코',art:'art-choco',time:0.8},
+    {id:'strawberry',name:'딸기',art:'art-straw',time:0.5},
+    {id:'lavender',name:'라벤더',art:'art-lavender',time:0.5},
+    {id:'rose',name:'로즈',art:'art-rose',time:0.5},
+    {id:'lemon',name:'레몬',art:'art-lemon',time:0.4},
+  ],
+  토핑:[
+    {id:'foam',name:'우유거품',art:'art-foam',time:1},
+    {id:'whip',name:'휘핑크림',art:'art-whip',time:0.8},
+    {id:'cinnamon',name:'시나몬',art:'art-cinnamon',time:0.3},
+    {id:'icecream',name:'아이스크림',art:'art-ice',time:0.5},
+    {id:'blueberry',name:'블루베리',art:'art-blueberry',time:0.4},
+    {id:'peach',name:'복숭아',art:'art-peach',time:0.4},
+  ]
+};
+
+const RECIPES = [
+  {id:'americano',name:'아메리카노',price:1500,tip:200,req:['espresso','water'],brew:2,col:'#4a2810'},
+  {id:'latte',name:'카페라떼',price:2000,tip:300,req:['espresso','milk'],brew:3,col:'#c49a6c'},
+  {id:'mocha',name:'카페모카',price:2500,tip:400,req:['espresso','milk','choco'],brew:3.5,col:'#5c2e18'},
+  {id:'vanilla_latte',name:'바닐라라떼',price:2500,tip:400,req:['espresso','milk','vanilla'],brew:3.5,col:'#d4a870'},
+  {id:'caramel_mac',name:'카라멜마키아또',price:3000,tip:500,req:['espresso','milk','caramel','foam'],brew:4,col:'#c07030'},
+  {id:'matcha_latte',name:'말차라떼',price:2800,tip:450,req:['milk','matcha','foam'],brew:3.5,col:'#7a9e6e'},
+  {id:'affogato',name:'아포가토',price:3500,tip:600,req:['espresso','icecream'],brew:2.5,col:'#fce0ec'},
+  {id:'straw_latte',name:'딸기라떼',price:3000,tip:500,req:['milk','strawberry','whip'],brew:4,col:'#e07080'},
+  {id:'oat_latte',name:'오트라떼',price:3200,tip:550,req:['espresso','oatmilk'],brew:3,col:'#c8a870'},
+  {id:'mocha_cream',name:'모카크림',price:3800,tip:700,req:['espresso','milk','choco','whip'],brew:4.5,col:'#4a2010'},
+  {id:'lavender_latte',name:'라벤더라떼',price:3500,tip:650,req:['milk','lavender','foam'],brew:4,col:'#9b8dc0'},
+  {id:'rose_latte',name:'로즈라떼',price:3500,tip:650,req:['milk','rose','foam'],brew:4,col:'#d4899a'},
+  {id:'iced_coconut',name:'코코넛라떼',price:3800,tip:700,req:['espresso','coconut'],brew:3,col:'#c8b070'},
+  {id:'lemon_ade',name:'레몬에이드',price:3000,tip:500,req:['lemon','water','blueberry'],brew:2,col:'#e0c040'},
+  {id:'peach_tea',name:'복숭아티',price:3200,tip:600,req:['peach','lemon','foam'],brew:3,col:'#f0a070'},
+  {id:'blackout',name:'블랙아웃라떼',price:4500,tip:900,req:['espresso','milk','choco','cinnamon','whip'],brew:5.5,col:'#1a0808'},
+];
+
+const CHAR_STYLES = [
+  {skin:'#ffd99a',hair:'#3a2010',body:'#e0604a',leg:'#2a4090',name:'소희님',patience:25},
+  {skin:'#f0c070',hair:'#1a1008',body:'#4060a0',leg:'#202820',name:'민기님',patience:30},
+  {skin:'#ffe0b0',hair:'#5a3020',body:'#c86090',leg:'#3a2010',name:'유리님',patience:22},
+  {skin:'#ffc890',hair:'#f8bcd8',body:'#d0a040',leg:'#402010',name:'지훈님',patience:28},
+  {skin:'#ffe8c0',hair:'#2a1008',body:'#ff4499',leg:'#201030',name:'지아님',patience:20},
+  {skin:'#f8d090',hair:'#100800',body:'#604080',leg:'#303050',name:'단골손님',patience:18},
+  {skin:'#ffd0a0',hair:'#ff88bb',body:'#d06090',leg:'#502050',name:'예린님',patience:26},
+];
+
+const UPGRADES = [
+  {id:'brewspd',icon:'⚙',name:'고급 에스프레소 머신',desc:'제조 속도 +40%',cost:3000,bought:false,fn:()=>{G.brewSpd=1.4;}},
+  {id:'patience',icon:'🎵',name:'아이돌 BGM',desc:'손님 인내심 +35%',cost:2500,bought:false,fn:()=>{G.patMult=1.35;}},
+  {id:'slot3',icon:'➕',name:'제조 슬롯 추가',desc:'동시 제조 +1 (→3)',cost:5000,bought:false,fn:()=>{G.maxSlots=3;renderBrewSlots();}},
+  {id:'tip',icon:'🎀',name:'메이드 서비스',desc:'팁 수입 +60%',cost:3500,bought:false,fn:()=>{G.tipMult=1.6;}},
+  {id:'spawn',icon:'📢',name:'SNS 바이럴',desc:'손님 방문 빨라짐',cost:4000,bought:false,fn:()=>{G.spawnRate=0.65;}},
+  {id:'donbonus',icon:'💜',name:'치지직 프리미엄',desc:'도네이션 팁 +100%',cost:6000,bought:false,fn:()=>{G.donTipMult=2;}},
+];
+
+/* ═══════════════════════════════════
+   STATE
+═══════════════════════════════════ */
+let G = {
+  money:0,score:0,day:1,dayTime:90,timeLeft:90,
+  happy:100,served:0,failed:0,donCount:0,
+  brewSpd:1,patMult:1,maxSlots:2,tipMult:1,spawnRate:1,donTipMult:1,
+  customers:[],orders:[],acceptedOrders:[],brewSlots:[],selOrder:null,
+  running:false,paused:false,loop:null,spawnTmr:null,
+  dayEarned:0,dayServed:0,dayFailed:0,dayDon:0,
+  chzzkConn:false,chzzkSSE:null,
+  simTimer:null,
+  discoveredRecipes:new Set(), // 발견한 레시피 id 저장
+};
+let selCat = '베이스';
+let selIngs = []; // array of ingredient ids
+let donPending = null; // pending donation data
+let donSelRecipe = null;
+
+/* ═══════════════════════════════════
+   CSS ART HTML GENERATORS
+═══════════════════════════════════ */
+function artHTML(id,size='40px'){
+  const s = `width:${size};height:${size};position:relative;flex-shrink:0;overflow:hidden;`;
+  switch(id){
+    case 'art-espresso': return `<div style="${s}"><div class="art-espresso"><div class="cup"></div><div class="handle"></div><div class="plate"></div></div></div>`;
+    case 'art-milk': return `<div style="${s}"><div class="art-milk"><div class="bottle"></div><div class="cap"></div><div class="label"></div></div></div>`;
+    case 'art-water': return `<div style="${s}"><div class="art-water"><div class="drop"></div></div></div>`;
+    case 'art-oat': return `<div style="${s}"><div class="art-oat"><div class="box"></div><div class="straw"></div></div></div>`;
+    case 'art-coconut': return `<div style="${s}"><div class="art-coconut"><div class="nut"></div></div></div>`;
+    case 'art-vanilla': return `<div style="${s}"><div class="art-vanilla"><div class="bottle2"></div><div class="vcap"></div><div class="vlabel">Va</div><div class="vfill"></div></div></div>`;
+    case 'art-caramel': return `<div style="${s}"><div class="art-caramel"><div class="jar"></div><div class="jlid"></div><div class="drip"></div></div></div>`;
+    case 'art-matcha': return `<div style="${s}"><div class="art-matcha"><div class="tin"></div><div class="spoon"></div><div class="powder"></div></div></div>`;
+    case 'art-choco': return `<div style="${s}"><div class="art-choco"><div class="bar"></div><div class="melt"></div></div></div>`;
+    case 'art-straw': return `<div style="${s}"><div class="art-straw"><div class="leaf"></div><div class="berry"><div class="seeds"><div class="seed"></div><div class="seed"></div><div class="seed"></div><div class="seed"></div></div></div><div class="drop"></div></div></div>`;
+    case 'art-lavender': return `<div style="${s}"><div class="art-lavender"><div class="bottle3"></div><div class="lcap"></div><div class="sprig"><div class="sprig-stem"></div><div class="sprig-fl"></div><div class="sprig-fl"></div><div class="sprig-fl"></div></div></div></div>`;
+    case 'art-rose': return `<div style="${s}"><div class="art-rose"><div class="bottle4"></div><div class="rcap"></div><div class="petal-wrap"><div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="rcenter"></div></div></div></div>`;
+    case 'art-lemon': return `<div style="${s}"><div class="art-lemon"><div class="fruit"></div><div class="nub"></div></div></div>`;
+    case 'art-foam': return `<div style="${s}"><div class="art-foam"><div class="cup2"></div><div class="foam-top"><div class="fb fb1"></div><div class="fb fb2"></div><div class="fb fb3"></div></div></div></div>`;
+    case 'art-whip': return `<div style="${s}"><div class="art-whip"><div class="base"></div><div class="spiral"><div class="sc sc1"></div><div class="sc sc2"></div><div class="sc sc3"></div></div></div></div>`;
+    case 'art-cinnamon': return `<div style="${s}"><div class="art-cinnamon"><div class="stick1"></div><div class="stick2"></div></div></div>`;
+    case 'art-ice': return `<div style="${s}"><div class="art-ice"><div class="cone"></div><div class="scoop"></div><div class="scoop2"></div></div></div>`;
+    case 'art-blueberry': return `<div style="${s}"><div class="art-blueberry"><div class="berries"><div class="bb"></div><div class="bb"></div><div class="bb"></div></div></div></div>`;
+    case 'art-peach': return `<div style="${s}"><div class="art-peach"><div class="leaf2"></div><div class="fruit2"></div></div></div>`;
+    default: return `<div style="${s};background:#333;border-radius:4px;"></div>`;
+  }
+}
+
+// 음료 CSS 아트 (컵에 채워진 형태)
+function drinkArtHTML(recipe, size='36px'){
+  const s = `width:${size};height:${size};position:relative;`;
+  const col = recipe.col || '#c49a6c';
+  const h = parseInt(size)*0.9;
+  const w = parseInt(size)*0.8;
+  return `<div style="${s}">
+    <div style="width:${w}px;height:${h}px;background:linear-gradient(135deg,${col}dd,${col});border-radius:3px 3px 8px 8px;border:2px solid ${col}aa;position:absolute;bottom:0;left:${(parseInt(size)-w)/2}px;overflow:hidden;box-shadow:inset 1px 1px 0 rgba(255,255,255,0.15);">
+      <div style="position:absolute;top:0;left:0;right:0;height:7px;background:rgba(255,255,255,0.25);border-radius:2px 2px 0 0;"></div>
+    </div>
+    <div style="width:${w*0.3}px;height:${h*0.4}px;border:2px solid ${col}aa;border-left:none;border-radius:0 ${w*0.3}px ${w*0.3}px 0;position:absolute;right:0;top:${h*0.2}px;"></div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════
+   TITLE & CHZZK SETUP
+═══════════════════════════════════ */
+function initTitleStars(){
+  const wrap = document.getElementById('tsStars');
+  const sparks = ['✦','✧','✦','·','✦'];
+  for(let i=0;i<35;i++){
+    const s = document.createElement('div');
+    s.className='ts-star';
+    s.textContent = sparks[Math.floor(Math.random()*sparks.length)];
+    const sz = 8+Math.random()*10;
+    const pink = Math.random() > 0.5;
+    s.style.cssText=`width:${sz}px;height:${sz}px;font-size:${sz}px;line-height:1;background:none;border-radius:0;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${1.5+Math.random()*3}s;animation-delay:${Math.random()*3}s;color:${pink?'#ff6aaa':'#88ccff'};`;
+    wrap.appendChild(s);
+  }
+}
+initTitleStars();
+
+/* ═══════════════════════════════════
+   치지직 연동 상태
+═══════════════════════════════════ */
+const CHZZK = {
+  // ── 앱 자격증명 (서버사이드에 두는 것이 이상적이나 HTML 단독 배포용으로 여기 보관)
+  // ⚠ 이 파일을 공개 배포 시 별도 백엔드 프록시 사용을 권장합니다
+  clientId:   'ad9a03d8-0376-4226-a7ec-0e418b12e944',
+  clientSecret: (() => {
+    // 난독화: 분리 저장 후 런타임 조합
+    const p = ['uveTd97mYkh','MNB9rMMRGqR','Hd2MrDikd38','kMIkBMVZGU'];
+    return p.join('');
+  })(),
+  channelId:'', accessToken:'',
+  sessionKey:'', socketUrl:'', socket:null, step:1,
+  chatOrderUser:'냐피카', // 채팅 주문 허용 닉네임
+  OPENAPI:'https://openapi.chzzk.naver.com',
+};
+
+/* ── 타이틀 → 게임 진입 ── */
+function directStart(){
+  document.getElementById('titleScreen').style.display='none';
+  document.getElementById('hud').style.display='flex';
+  document.getElementById('gameWrap').style.display='grid';
+  startGame();
+}
+
+function showChzzkSetup(){
+  document.getElementById('chzzkModal').classList.add('show');
+  document.getElementById('chzzkMain').style.display='block';
+  document.getElementById('chzzkDone').style.display='none';
+  setChzzkStatus('','');
+  // 게임 중이면 일시정지
+  if(G.running && !G.paused) togglePause();
+  setTimeout(()=>document.getElementById('chzzkChannelId')?.focus(),120);
+}
+
+function closeChzzkModal(){
+  document.getElementById('chzzkModal').classList.remove('show');
+  // 게임 중 일시정지 상태였다면 자동 재개
+  if(G.running && G.paused) togglePause();
+}
+
+function showStep(n){ CHZZK.step=n; /* 단순화됨 */ }
+
+function chzzkMainAction(){ startOAuthFromModal(); }
+
+function validateStep1(){ startOAuthFromModal(); }
+
+/* ── OAuth 팝업 흐름 ──
+   치지직 OAuth: https://chzzk.naver.com/account-interlock?clientId=...&redirectUri=...&state=...
+   redirectUri는 이 파일을 서빙하는 주소 + ?chzzk_code=CODE 형태로 받음
+   로컬 파일(file://)은 redirect 불가 → 토큰 직접 입력 안내
+*/
+/* ── 모달에서 로그인 버튼 클릭 ── */
+function startOAuthFromModal(){
+  const uid = document.getElementById('chzzkChannelId').value.trim();
+  if(!uid || uid.length < 16){
+    setChzzkStatus('err','⚠ 채널 UID를 입력하세요 (chzzk.naver.com/ 뒤의 32자리 코드)');
+    return;
+  }
+  CHZZK.channelId = uid;
+  startOAuth();
+}
+
+function startOAuth(){
+  const cid = CHZZK.clientId;
+
+  // file:// 프로토콜 감지 → OAuth redirect 불가 안내
+  if(location.protocol === 'file:'){
+    setChzzkStatus('err',
+      `⚠ 로컬 파일(file://)은 OAuth 로그인 불가합니다.<br><br>
+       <b style="color:#cc1166">무료 배포 방법 (GitHub Pages):</b><br>
+       <span style="font-family:'Nanum Gothic',sans-serif;line-height:2;">
+       1. github.com 가입<br>
+       2. New repository 생성<br>
+       3. 이 HTML 파일 업로드<br>
+       4. Settings → Pages → Branch: main 선택<br>
+       5. <b>본인ID.github.io/저장소명</b> 으로 접속<br>
+       </span>
+       <small>또는 아래 '고급' 메뉴에서 Access Token 직접 입력</small>`
+    );
+    return;
+  }
+
+  const redirect = encodeURIComponent(location.href.split('?')[0]);
+  const state = 'cafe_' + Math.random().toString(36).slice(2,8);
+  sessionStorage.setItem('chzzk_oauth_state', state);
+  sessionStorage.setItem('chzzk_pending', JSON.stringify({channelId:CHZZK.channelId}));
+
+  const oauthUrl = `https://chzzk.naver.com/account-interlock?clientId=${encodeURIComponent(cid)}&redirectUri=${redirect}&state=${state}`;
+
+  // noopener 없이 팝업 열기 (있으면 팝업 감지 불가)
+  const popup = window.open(oauthUrl, 'chzzk_oauth', 'width=500,height=680,left=200,top=100');
+  if(!popup || popup.closed){
+    setChzzkStatus('err',
+      `⚠ 팝업이 차단되었습니다.<br>
+       주소창 옆 🚫 아이콘 클릭 → 팝업 허용 → 다시 시도하세요.<br>
+       <small>또는 Access Token을 직접 입력하세요 (아래 고급 메뉴)</small>`
+    );
+    return;
+  }
+  setChzzkStatus('loading','🔄 팝업에서 치지직 로그인을 완료해주세요...');
+
+  // 팝업 URL 감지로 code 추출
+  const checker = setInterval(()=>{
+    try{
+      if(popup.closed){ clearInterval(checker); return; }
+      const popUrl = popup.location.href;
+      if(popUrl && popUrl.includes('chzzk_code=')){
+        const code = new URL(popUrl).searchParams.get('chzzk_code');
+        clearInterval(checker);
+        popup.close();
+        if(code) exchangeCode(code);
+      }
+    }catch(e){ /* cross-origin 접근 오류 — 정상, 계속 폴링 */ }
+  }, 300);
+
+  // 5분 타임아웃
+  setTimeout(()=>{ clearInterval(checker); if(!popup.closed) popup.close(); }, 300000);
+}
+
+
+/* ── Access Token 직접 입력으로 연결 ── */
+async function connectWithToken(){
+  const tok = document.getElementById('chzzkAccessTokenManual')?.value.trim();
+  const uid = document.getElementById('chzzkChannelId').value.trim();
+  if(!tok){ setChzzkStatus('err','⚠ Access Token을 입력하세요'); return; }
+  if(!uid || uid.length < 16){ setChzzkStatus('err','⚠ 채널 UID를 입력하세요'); return; }
+  CHZZK.channelId = uid;
+  CHZZK.accessToken = tok.replace(/^Bearer\s+/i,'');
+  setChzzkStatus('loading','🔄 연결 중...');
+  await connectChzzk();
+}
+
+async function exchangeCode(code){
+  setChzzkStatus('loading','🔄 Access Token 교환 중...');
+  try{
+    const resp=await fetch(`${CHZZK.OPENAPI}/auth/v1/token`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Client-Id':CHZZK.clientId,'Client-Secret':CHZZK.clientSecret},
+      body:JSON.stringify({grantType:'authorization_code',code,redirectUri:location.href.split('?')[0]})
+    });
+    const data=await resp.json();
+    if(data?.content?.accessToken){
+      CHZZK.accessToken=data.content.accessToken;
+      document.getElementById('chzzkAccessTokenManual').value='(자동 발급됨)';
+      setChzzkStatus('ok','✅ 로그인 성공! 연결 버튼을 눌러주세요.');
+    } else {
+      throw new Error(data?.message||'토큰 교환 실패');
+    }
+  }catch(e){
+    setChzzkStatus('err','⚠ '+e.message+'<br><small>Access Token을 직접 입력해주세요.</small>');
+  }
+}
+
+// 페이지 로드 시 OAuth redirect code 자동 처리
+(function checkOAuthRedirect(){
+  const params=new URLSearchParams(location.search);
+  const code=params.get('chzzk_code');
+  if(code){
+    history.replaceState({},'',location.pathname);
+    // 세션에 저장된 설정 복원
+    const saved=sessionStorage.getItem('chzzk_pending');
+    if(saved){
+      try{
+        const d=JSON.parse(saved);
+        if(d.channelId) CHZZK.channelId=d.channelId;
+      }catch(e){}
+    }
+    document.getElementById('chzzkModal').classList.add('show');
+    document.getElementById('chzzkMain').style.display='block';
+    setChzzkStatus('loading','🔄 로그인 완료! 연결 중...');
+    exchangeCode(code);
+  }
+})();
+
+async function connectChzzk(){
+  const manualTok = document.getElementById('chzzkAccessTokenManual').value.trim();
+  if(!manualTok){setChzzkStatus('err','⚠ Access Token을 입력하세요 (치지직 개발자센터 → OAuth 발급)');return;}
+  CHZZK.accessToken = manualTok.replace(/^Bearer\s+/i,'');
+  setChzzkStatus('loading','🔄 치지직 서버에 세션 연결 중...');
+
+  // ── STEP 1: 세션 URL 발급 (Client 인증)
+  // POST https://openapi.chzzk.naver.com/open/v1/sessions
+  // Header: Client-Id, Client-Secret, Content-Type
+  // CORS 우회 불가(브라우저) → 프록시 없이 직접 호출 시도 후 CORS 에러면 안내
+  let sessionUrl = null;
+  try {
+    const sessResp = await fetch(`${CHZZK.OPENAPI}/open/v1/sessions`, {
+      method:'POST',
+      headers:{
+        'Client-Id': CHZZK.clientId,
+        'Client-Secret': CHZZK.clientSecret,
+        'Content-Type':'application/json',
+      },
+      body: JSON.stringify({})
+    });
+    if(!sessResp.ok){
+      const err=await sessResp.json().catch(()=>({}));
+      throw new Error(`세션 발급 실패 (${sessResp.status}): ${err.message||''}`);
+    }
+    const sessData = await sessResp.json();
+    sessionUrl = sessData?.content?.url;
+    CHZZK.sessionKey = sessData?.content?.sessionKey || '';
+    if(!sessionUrl) throw new Error('세션 URL이 없습니다. Client-Id/Secret을 확인하세요.');
+    CHZZK.socketUrl = sessionUrl;
+    setChzzkStatus('loading','✅ 세션 URL 발급 완료! Socket.IO 연결 중...');
+  } catch(e){
+    // CORS 에러일 경우 안내 메시지
+    if(e.message.includes('Failed to fetch')||e.message.includes('NetworkError')){
+      setChzzkStatus('err',
+        `⚠ CORS 오류: 브라우저에서 직접 치지직 API 호출이 차단됩니다.<br>
+         → <strong>로컬 프록시 서버</strong>를 통해 실행하거나<br>
+         → Chrome 확장 "CORS Unblock"을 임시 활성화 후 다시 시도하세요.<br>
+         <small style="color:#ff6699">또는 시뮬레이터로 게임을 먼저 체험하세요.</small>`);
+      return;
+    }
+    setChzzkStatus('err',`⚠ ${e.message}`);
+    return;
+  }
+
+  // ── STEP 2: Socket.IO 연결 (socket.io-client v2.0.3만 지원)
+  // 치지직은 socket.io v2 프로토콜만 수용 — CDN에서 로드
+  if(!window.io){
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js');
+  }
+  try {
+    await chzzkSocketConnect(sessionUrl);
+  } catch(e){
+    setChzzkStatus('err',`⚠ Socket 연결 실패: ${e.message}`);
+    return;
+  }
+
+  // ── STEP 3: 후원 이벤트 구독
+  // POST https://openapi.chzzk.naver.com/open/v1/sessions/events/subscribe/donation?sessionKey=...
+  try {
+    const subResp = await fetch(
+      `${CHZZK.OPENAPI}/open/v1/sessions/events/subscribe/donation?sessionKey=${encodeURIComponent(CHZZK.sessionKey)}`,
+      {
+        method:'POST',
+        headers:{
+          'Authorization':`Bearer ${CHZZK.accessToken}`,
+          'Content-Type':'application/json',
+        },
+        body: JSON.stringify({channelId: CHZZK.channelId})
+      }
+    );
+    if(!subResp.ok){
+      const err=await subResp.json().catch(()=>({}));
+      throw new Error(`구독 실패 (${subResp.status}): ${err.message||''}`);
+    }
+    // 채팅 이벤트 구독 (donation:read 와 함께 chat:read 도 구독)
+    try {
+      await fetch(
+        `${CHZZK.OPENAPI}/open/v1/sessions/events/subscribe/chat?sessionKey=${encodeURIComponent(CHZZK.sessionKey)}`,
+        {
+          method:'POST',
+          headers:{'Authorization':`Bearer ${CHZZK.accessToken}`,'Content-Type':'application/json'},
+          body: JSON.stringify({channelId: CHZZK.channelId})
+        }
+      );
+      console.log('[치지직] 채팅 이벤트 구독 완료');
+    } catch(e){ console.warn('[치지직] 채팅 구독 실패 (권한 없을 수 있음):', e.message); }
+
+    G.chzzkConn=true;
+    setChzzkStatus('ok',`✅ 연결 완료! 후원 + 채팅 주문 수신 중`);
+    document.getElementById('chzzkDot').classList.add('live');
+    document.getElementById('chzzkConnLabel').textContent='LIVE';
+    document.getElementById('chzzkConnLabel').style.color='var(--green)';
+    document.getElementById('chzzkMain').style.display='none';
+    document.getElementById('chzzkDone').style.display='block';
+    document.getElementById('chzzkConnMsg').textContent=`실시간 연결 성공! 🎀`;
+    document.getElementById('chzzkConnDetail').innerHTML=`채널 ${CHZZK.channelId.slice(0,12)}... 후원 이벤트 + 채팅 주문 수신 중<br><small style="color:var(--text2)">채팅 !주문 명령어도 작동합니다</small>`;
+  } catch(e){
+    setChzzkStatus('err',`⚠ 구독 실패: ${e.message}<br><small>donation:read 권한이 있는지 확인하세요.</small>`);
+  }
+}
+
+function loadScript(src){
+  return new Promise((res,rej)=>{
+    const s=document.createElement('script');s.src=src;
+    s.onload=res; s.onerror=()=>rej(new Error('스크립트 로드 실패: '+src));
+    document.head.appendChild(s);
+  });
+}
+
+function chzzkSocketConnect(url){
+  return new Promise((resolve,reject)=>{
+    if(CHZZK.socket){try{CHZZK.socket.disconnect();}catch(e){}}
+    const sock = window.io(url,{
+      reconnection:true,
+      forceNew:true,
+      timeout:5000,
+      transports:['websocket'],
+    });
+    CHZZK.socket = sock;
+    const tid = setTimeout(()=>reject(new Error('연결 시간 초과 (5s)')),6000);
+
+    sock.on('connect',()=>{
+      clearTimeout(tid);
+      console.log('[치지직] Socket.IO 연결됨');
+      resolve();
+    });
+    sock.on('connect_error',(e)=>{
+      clearTimeout(tid);
+      reject(new Error(e.message||'연결 오류'));
+    });
+    sock.on('SYSTEM',(data)=>{
+      console.log('[치지직] SYSTEM',data);
+      try{
+        const d=typeof data==='string'?JSON.parse(data):data;
+        if(d.type==='connected') CHZZK.sessionKey=d.data?.sessionKey||CHZZK.sessionKey;
+      }catch(e){}
+    });
+    sock.on('DONATION',(data)=>{
+      console.log('[치지직] DONATION',data);
+      try{
+        const d=typeof data==='string'?JSON.parse(data):data;
+        receiveDonation({
+          nickname: d.donatorNickname||'익명',
+          message:  d.donationText||'',
+          amount:   d.payAmount||0,
+        });
+      }catch(e){console.error('[치지직] DONATION 파싱 오류',e);}
+    });
+    sock.on('CHAT',(data)=>{
+      try{
+        const d=typeof data==='string'?JSON.parse(data):data;
+        const nick = d.profile?.nickname || '';
+        const msg  = d.content || '';
+        // !주문 명령어 감지 — 채널 소유자가 설정한 닉네임만 허용
+        if(nick === CHZZK.chatOrderUser && msg.includes('!주문')){
+          console.log('[치지직] 채팅 주문 감지:', nick, msg);
+          receiveDonation({
+            nickname: nick,
+            message: msg.replace('!주문','').trim() || '채팅으로 주문했어요!',
+            amount: 2000, // 채팅 주문은 고정 2000원 트리거
+            isChatOrder: true,
+          });
+        }
+      }catch(e){}
+    });
+    sock.on('disconnect',()=>{
+      console.log('[치지직] 연결 끊김 — 재연결 시도 중...');
+      G.chzzkConn=false;
+      document.getElementById('chzzkDot').classList.remove('live');
+    });
+  });
+}
+
+function launchGame(){
+  document.getElementById('chzzkModal').classList.remove('show');
+  document.getElementById('titleScreen').style.display='none';
+  document.getElementById('hud').style.display='flex';
+  document.getElementById('gameWrap').style.display='grid';
+  startGame();
+}
+
+function skipChzzk(){
+  // 하위 호환
+  closeChzzkModal();
+}
+
+
+/* ── 일시정지 / 재개 ── */
+function togglePause(){
+  if(!G.running) return;
+  G.paused = !G.paused;
+  const btn = document.getElementById('pauseBtn');
+  const overlay = document.getElementById('pauseOverlay');
+  if(G.paused){
+    btn.textContent = '▶ 재개';
+    btn.style.borderColor = 'var(--pink)';
+    btn.style.color = 'var(--pink)';
+    if(overlay) overlay.classList.add('show');
+    clearTimeout(G.spawnTmr); // 손님 스폰 중지
+  } else {
+    btn.textContent = '⏸ 일시정지';
+    btn.style.borderColor = 'var(--border2)';
+    btn.style.color = 'var(--text)';
+    if(overlay) overlay.classList.remove('show');
+    scheduleSpawn(); // 손님 스폰 재개
+  }
+}
+
+function setChzzkStatus(type, msg){
+  const el=document.getElementById('chzzkStatus');
+  if(!type||!msg){el.className='chzzk-status';el.innerHTML='';return;}
+  el.className='chzzk-status '+type;
+  el.innerHTML=msg;
+}
+
+/* ═══════════════════════════════════
+   GAME INIT
+═══════════════════════════════════ */
+function startGame(){
+  renderCatTabs();
+  renderIngredients();
+  renderRecipes();
+  renderUpgrades();
+  renderBrewSlots();
+  initDay();
+}
+
+function initDay(){
+  G.running=true;
+  G.dayTime = 70 + G.day*8;
+  G.timeLeft = G.dayTime;
+  G.dayEarned=0;G.dayServed=0;G.dayFailed=0;G.dayDon=0;
+  G.customers=[];G.orders=[];G.acceptedOrders=[];
+  selIngs=[];
+  updateSelTags();
+  renderIngredients();
+  clearCustomers();
+  renderOrders();
+  document.getElementById('hudDay').textContent=`DAY ${G.day}`;
+  renderRecipes();
+  setMsg(`DAY ${G.day} 오픈! 손님을 맞이하세요 ☕`);
+  // 시뮬레이터 도네이션 타이머
+  startDonSimulator();
+  // 게임 루프
+  let last = Date.now();
+  G.loop = setInterval(()=>{
+    if(!G.running||G.paused)return;
+    const now=Date.now();
+    const dt=(now-last)/1000; last=now;
+    G.timeLeft = Math.max(0, G.timeLeft-dt);
+    updateTimerBar();
+    document.getElementById('hudTimeLeft').textContent = Math.ceil(G.timeLeft)+'s';
+    // 손님 인내심
+    G.customers.forEach(c=>{
+      if(c.seated&&!c.left){
+        c.patience -= dt*(100/(c.maxPat*G.patMult));
+        if(c.patience<=0) customerAngry(c);
+        else updateCustEl(c);
+      }
+    });
+    // 제조 진행
+    G.brewSlots.forEach(sl=>{
+      if(sl.item&&!sl.done){
+        sl.elapsed+=dt;
+        const pct=Math.min(sl.elapsed/(sl.item.brew/G.brewSpd),1);
+        const el=document.getElementById('bs-'+sl.id);
+        if(el){
+          el.querySelector('.bs-progfill').style.width=(pct*100)+'%';
+          if(pct>=1){
+  sl.done=true;el.classList.add('done');
+  el.setAttribute('draggable','true');
+  const isUnk = sl.item.recipe.isUnknown;
+  // unknown이면 회색 물음표 컵, 아니면 정상 아트
+  const artInner = isUnk
+    ? `<div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:rgba(100,100,100,0.12);border-radius:6px;border:2px dashed #999;">🧪</div>`
+    : drinkArtHTML(sl.item.recipe,'36px');
+  el.innerHTML=`<div class="bs-art">${artInner}</div><div class="bs-label">${isUnk?'???':sl.item.recipe.name}</div><div class="bs-done-badge">${isUnk?'?':'✓'}</div><div style="font-size:0.55rem;color:var(--gold);margin-top:1px;">드래그→주문</div>`;
+  el.ondragstart=(ev)=>onSlotDragStart(ev,sl.id);
+  el.ondragend=(ev)=>onSlotDragEnd(ev);
+}
+        }
+      }
+    });
+    if(G.timeLeft<=0){endDay();}
+  },50);
+  scheduleSpawn();
+}
+
+function updateTimerBar(){
+  const r=G.timeLeft/G.dayTime;
+  document.getElementById('timerFill').style.width=(r*100)+'%';
+  document.getElementById('timerFill').style.background=
+    r>.5?'linear-gradient(to right,#3db85a,#80e060)':
+    r>.25?'linear-gradient(to right,#e88a20,#ffc0dc)':
+    'linear-gradient(to right,#d63030,#f04040)';
+}
+
+/* ═══════════════════════════════════
+   CUSTOMERS
+═══════════════════════════════════ */
+function scheduleSpawn(){
+  if(!G.running)return;
+  const d=(3500+Math.random()*4000)*G.spawnRate;
+  G.spawnTmr=setTimeout(()=>{
+    if(!G.running||G.paused)return;
+    if(G.customers.filter(c=>!c.left).length<3) spawnCustomer();
+    scheduleSpawn();
+  },d);
+}
+
+function spawnCustomer(forcedRecipe){
+  const freeTable=findFreeTable();
+  if(freeTable===null)return;
+  const cs=CHAR_STYLES[Math.floor(Math.random()*CHAR_STYLES.length)];
+  const recipe=forcedRecipe||RECIPES[Math.floor(Math.random()*RECIPES.length)];
+  const id='c'+Date.now();
+  const c={id,cs,recipe,tableSlot:freeTable,patience:100,maxPat:cs.patience+G.day*1.5,seated:false,left:false,el:null,isDon:!!forcedRecipe};
+  G.customers.push(c);
+  const el=buildCustEl(c);
+  document.getElementById('cafeScene').appendChild(el);
+  c.el=el;
+  el.style.left='-70px';
+  setTimeout(()=>{
+    const pos=getTablePos(freeTable);
+    el.style.left=pos.x+'px';
+    setTimeout(()=>{
+      c.seated=true;
+      el.classList.add('seated');
+      el.style.bottom=pos.y+'px';
+      el.querySelector('.cust-bubble').textContent=recipe.name+' 주세요!';
+      addOrder(c);
+    },900);
+  },50);
+}
+
+function buildCustEl(c){
+  const isDon=c.isDon;
+  const el=document.createElement('div');
+  el.className='customer';el.id=c.id;
+  el.innerHTML=`
+    <div class="cust-bubble">${isDon?'💜 도네이션 손님!':'안녕하세요!'}</div>
+    <div class="cust-wrap">
+      <div class="css-char">
+        <div class="char-head" style="background:linear-gradient(135deg,${c.cs.skin},${c.cs.skin}cc);">
+          <div class="char-hair" style="background:${c.cs.hair};"></div>
+          <div class="char-eyes"><div class="char-eye"></div><div class="char-eye"></div></div>
+          <div class="char-mouth"></div>
+        </div>
+        <div class="char-body" style="background:linear-gradient(to bottom,${c.cs.body},${c.cs.body}cc);">
+          <div class="char-arm left" style="background:${c.cs.skin};"></div>
+          <div class="char-arm right" style="background:${c.cs.skin};"></div>
+        </div>
+        <div class="char-legs"><div class="char-leg" style="background:${c.cs.leg};"></div><div class="char-leg" style="background:${c.cs.leg};"></div></div>
+      </div>
+      <div class="patience-bar"><div class="patience-fill" style="width:100%;background:var(--green);"></div></div>
+    </div>`;
+  return el;
+}
+
+function findFreeTable(){
+  const used=G.customers.filter(c=>!c.left).map(c=>c.tableSlot);
+  for(let i=0;i<3;i++)if(!used.includes(i))return i;
+  return null;
+}
+
+function getTablePos(slot){
+  const xs=[28,160,292];
+  const scene=document.getElementById('cafeScene');
+  const h=scene.offsetHeight;
+  return {x:xs[slot],y:Math.floor(h*0.32)};
+}
+
+function updateCustEl(c){
+  const f=c.el&&c.el.querySelector('.patience-fill');
+  if(!f)return;
+  f.style.width=c.patience+'%';
+  f.style.background=c.patience>60?'var(--green)':c.patience>30?'#e88a20':'var(--red)';
+  const mouth=c.el.querySelector('.char-mouth');
+  if(mouth){
+    if(c.patience>60){mouth.style.borderBottom='2px solid #ff6699';mouth.style.borderRadius='0 0 6px 6px';mouth.style.top='18px';}
+    else if(c.patience>30){mouth.style.borderBottom='none';mouth.style.borderTop='2px solid #ff6699';mouth.style.borderRadius='6px 6px 0 0';mouth.style.top='20px';}
+    else{mouth.style.borderBottom='none';mouth.style.borderTop='2px solid #ff4466';mouth.style.borderRadius='6px 6px 0 0';mouth.style.top='20px';}
+  }
+  // 주문 아이템 patience 바
+  const ord=G.orders.find(o=>o.custId===c.id);
+  if(ord){
+    const oe=document.getElementById('oi-'+ord.id);
+    if(oe){
+      oe.classList.toggle('urgent',c.patience<30);
+      const pb=oe.querySelector('.oi-pfill');
+      if(pb){pb.style.width=c.patience+'%';pb.style.background=c.patience>60?'var(--green)':c.patience>30?'#e88a20':'var(--red)';}
+    }
+  }
+}
+
+function customerAngry(c){
+  if(c.left)return;
+  c.left=true;
+  if(c.el){c.el.querySelector('.cust-bubble').textContent='😡 됐어요!';}
+  setTimeout(()=>{if(c.el){c.el.style.left='-80px';setTimeout(()=>c.el&&c.el.remove(),900);}},600);
+  const angryOids=G.orders.filter(o=>o.custId===c.id).map(o=>o.id);
+  G.orders=G.orders.filter(o=>o.custId!==c.id);
+  G.acceptedOrders=G.acceptedOrders.filter(id=>!angryOids.includes(id));
+  G.failed++;G.dayFailed++;
+  G.happy=Math.max(0,G.happy-8);
+  updateHUD();renderOrders();
+  setMsg(`${c.cs.name} 화내며 떠남... 😰`);
+}
+
+function clearCustomers(){document.querySelectorAll('.customer').forEach(e=>e.remove());}
+
+/* ═══════════════════════════════════
+   ORDERS
+═══════════════════════════════════ */
+function addOrder(c){
+  const oid='o'+Date.now();
+  const ord={id:oid,custId:c.id,recipe:c.recipe,cust:c,isDon:c.isDon,accepted:false};
+  G.orders.push(ord);
+  renderOrders();
+  setMsg(`${c.cs.name}: ${c.recipe.name} 주문!`);
+}
+
+function orderItemHTML(o, showAccept){
+  const cust=G.customers.find(c=>c.id===o.custId);
+  const pat=cust?Math.floor(cust.patience):100;
+  const seqNum = o.accepted ? (G.acceptedOrders.indexOf(o.id)+1) : '';
+  return `<div class="order-item${o.isDon?' donation':''}${o.accepted?' accepted':''}${pat<30&&!o.accepted?' urgent':''}"
+      id="oi-${o.id}"
+      ondragover="onOrderDragOver(event,'${o.id}')"
+      ondragleave="onOrderDragLeave(event,'${o.id}')"
+      ondrop="onOrderDrop(event,'${o.id}')">
+    <div class="oi-top">
+      ${o.accepted?`<div class="oi-seq">${seqNum}</div>`:''}
+      <div class="oi-art">${drinkArtHTML(o.recipe,'26px')}</div>
+      <div class="oi-info"><div class="oi-name">${o.recipe.name}</div><div class="oi-who">${o.cust.cs.name}</div></div>
+      <div class="oi-price">₩${o.recipe.price}</div>
+      ${o.isDon?'<div class="oi-chzzk-badge">💜 도네</div>':''}
+      ${showAccept&&!o.accepted?`<button class="oi-accept-btn" onclick="selectOrder('${o.id}')">수락</button>`:''}
+    </div>
+    <div class="oi-pbar"><div class="oi-pfill" style="width:${pat}%;background:${pat>60?'var(--green)':pat>30?'#e88a20':'var(--red)'}"></div></div>
+  </div>`;
+}
+
+function renderOrders(){
+  const list=document.getElementById('orderList');
+  const accepted = G.orders.filter(o=>o.accepted);
+  const waiting  = G.orders.filter(o=>!o.accepted);
+  if(!G.orders.length){
+    list.innerHTML='<div style="color:#cc3377;font-size:0.73rem;font-family:\'Nanum Gothic\',sans-serif;">주문 대기 없음</div>';
+    return;
+  }
+  let html='';
+  if(accepted.length){
+    const sorted=[...accepted].sort((a,b)=>G.acceptedOrders.indexOf(a.id)-G.acceptedOrders.indexOf(b.id));
+    html+=`<div class="ol-section-label">📋 수락 순서</div>`;
+    html+=sorted.map(o=>orderItemHTML(o,false)).join('');
+  }
+  if(waiting.length){
+    html+=`<div class="ol-section-label" style="margin-top:${accepted.length?6:0}px;">⏳ 주문 대기</div>`;
+    html+=waiting.map(o=>orderItemHTML(o,true)).join('');
+  }
+  list.innerHTML=html;
+}
+
+
+function selectOrder(oid){
+  const ord = G.orders.find(o=>o.id===oid);
+  if(!ord) return;
+  // 이미 수락된 주문은 중복 수락 불가
+  if(ord.accepted){
+    setMsg(`⚠ 이미 수락한 주문입니다 (순서 ${G.acceptedOrders.indexOf(oid)+1}번째)`);
+    return;
+  }
+  // 수락 처리
+  ord.accepted = true;
+  G.acceptedOrders.push(oid);
+  G.selOrder = ord;
+  // 인내심 100으로 초기화 (대기 시간 리셋)
+  const cust = G.customers.find(c=>c.id===ord.custId);
+  if(cust && !cust.left){
+    cust.patience = 100;
+    updateCustEl(cust);
+    const bubble = cust.el?.querySelector('.cust-bubble');
+    if(bubble) bubble.textContent = `😊 감사합니다!`;
+    setTimeout(()=>{
+      if(bubble&&!cust.left) bubble.textContent=`${ord.recipe.name} 부탁드려요`;
+    },1500);
+  }
+  renderOrders();
+  setMsg(`✅ "${ord.recipe.name}" 수락! 대기시간 초기화 😊`);
+}
+
+/* ═══════════════════════════════════
+   INGREDIENTS UI
+═══════════════════════════════════ */
+function renderCatTabs(){
+  document.getElementById('catTabs').innerHTML=CATS.map(c=>`<button class="cat-tab ${c===selCat?'active':''}" onclick="switchCat('${c}')">${c}</button>`).join('');
+}
+function switchCat(c){selCat=c;renderCatTabs();renderIngredients();}
+
+/* ═══════════════════════════════════
+   드래그앤드롭 상태
+═══════════════════════════════════ */
+let dragIngId = null;   // 드래그 중인 재료 id
+let dragSlotId = null;  // 드래그 중인 완성 슬롯 id
+
+function findIng(id){
+  for(const cat of Object.values(INGREDIENTS)){const f=cat.find(i=>i.id===id);if(f)return f;}return null;
+}
+
+/* ── 재료 버튼 렌더 (클릭 + 드래그 지원) ── */
+function renderIngredients(){
+  const ings=INGREDIENTS[selCat];
+  const grid=document.getElementById('ingGrid');
+  grid.innerHTML=ings.map(i=>`
+    <div class="ing-btn ${selIngs.includes(i.id)?'sel':''}"
+      draggable="true"
+      onclick="toggleIng('${i.id}')"
+      ondragstart="onIngDragStart(event,'${i.id}')"
+      ondragend="onIngDragEnd(event)">
+      ${artHTML(i.art,'40px')}
+      <div class="ing-name">${i.name}</div>
+    </div>`).join('');
+  renderCraftBtns();
+}
+
+function renderCraftBtns(){
+  ['베이스','시럽','토핑'].forEach((cat,ci)=>{
+    const elId=['cpBase','cpSyrup','cpTopping'][ci];
+    document.getElementById(elId).innerHTML=INGREDIENTS[cat].map(i=>`
+      <div class="ing-btn ${selIngs.includes(i.id)?'sel':''}"
+        style="min-width:52px;padding:7px 5px;"
+        draggable="true"
+        onclick="toggleIng('${i.id}')"
+        ondragstart="onIngDragStart(event,'${i.id}')"
+        ondragend="onIngDragEnd(event)">
+        ${artHTML(i.art,'32px')}
+        <div class="ing-name">${i.name}</div>
+      </div>`).join('');
+  });
+}
+
+function toggleIng(id){
+  if(!G.selOrder){setMsg('⚠ 먼저 주문을 선택하세요!');return;}
+  if(selIngs.includes(id)){selIngs=selIngs.filter(i=>i!==id);}
+  else{if(selIngs.length>=5){setMsg('재료는 최대 5개까지!');return;}selIngs.push(id);}
+  renderIngredients();updateSelTags();
+}
+
+function updateSelTags(){
+  const wrap=document.getElementById('saTags');
+  if(!selIngs.length){wrap.innerHTML='<span class="sa-empty">재료를 선택하세요</span>';return;}
+  const tags=selIngs.map(id=>{
+    const ing=findIng(id);
+    return `<div class="sa-tag" onclick="toggleIng('${id}')">${ing?ing.name:'?'} ×</div>`;
+  }).join('');
+  // 힌트: 현재 선택으로 완성 가능한 레시피 미리 알려주기
+  const hint=getRecipeHint(selIngs);
+  wrap.innerHTML=tags+'<div class="sa-hint">'+hint+'</div>';
+}
+
+function getRecipeHint(ingIds){
+  if(!ingIds.length) return '';
+  // 완전 일치
+  const exact=matchRecipe(ingIds);
+  if(exact) return `<span style="color:var(--green);font-weight:700;">✅ ${exact.name} 완성 가능!</span>`;
+  // 부분 일치: 어떤 레시피에 가까운지 (현재 선택 재료가 모두 포함된 레시피만)
+  const candidates=RECIPES.filter(r=>ingIds.every(id=>r.req.includes(id)));
+  if(candidates.length===0){
+    return `<span style="color:var(--red)">❌ 레시피 없음 — 재료를 바꿔보세요</span>`;
+  }
+  // 가장 가까운 후보
+  const best=candidates.sort((a,b)=>a.req.length-b.req.length)[0];
+  const missing=best.req.filter(id=>!ingIds.includes(id));
+  const missingNames=missing.map(id=>{const ing=findIng(id);return ing?ing.name:id;});
+  if(missingNames.length===0) return `<span style="color:var(--green)">✅ ${best.name}</span>`;
+  return `<span style="color:var(--text2)">💡 <b>${best.name}</b> — ${missingNames.join(', ')} 추가 필요</span>`;
+}
+
+/* ── 재료 드래그 이벤트 ── */
+function onIngDragStart(e, id){
+  dragIngId=id; dragSlotId=null;
+  e.dataTransfer.effectAllowed='copy';
+  e.dataTransfer.setData('text/plain', id);
+  // 커스텀 고스트
+  const ing=findIng(id);
+  const ghost=document.getElementById('dragGhost');
+  document.getElementById('dgName').textContent=ing?ing.name:id;
+  ghost.style.opacity='1';
+  e.dataTransfer.setDragImage(ghost, 0, 0);
+  setTimeout(()=>e.target.classList.add('dragging'),0);
+}
+function onIngDragEnd(e){
+  e.target.classList.remove('dragging');
+  document.getElementById('dragGhost').style.opacity='0';
+  dragIngId=null;
+}
+
+/* ── 완성 음료 드래그 (슬롯→주문 드롭 서빙) ── */
+function onSlotDragStart(e, slotId){
+  dragSlotId=slotId; dragIngId=null;
+  e.dataTransfer.effectAllowed='move';
+  e.dataTransfer.setData('text/plain','slot:'+slotId);
+  setTimeout(()=>e.target.classList.add('dragging'),0);
+}
+function onSlotDragEnd(e){
+  e.target.classList.remove('dragging');
+  dragSlotId=null;
+}
+
+/* ── 브루 슬롯 드롭 존 ── */
+function onSlotDragOver(e, slotId){
+  if(dragIngId===null) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect='copy';
+  document.getElementById('bs-'+slotId).classList.add('drag-over');
+}
+function onSlotDragLeave(e, slotId){
+  document.getElementById('bs-'+slotId).classList.remove('drag-over');
+}
+function onSlotDrop(e, slotId){
+  e.preventDefault();
+  document.getElementById('bs-'+slotId).classList.remove('drag-over');
+  if(dragIngId!==null){
+    // 재료를 슬롯에 드롭 = 해당 재료만 추가해서 바로 제조
+    if(!G.selOrder){setMsg('⚠ 주문을 먼저 선택하세요!');return;}
+    if(!selIngs.includes(dragIngId)){
+      if(selIngs.length>=5){setMsg('재료는 최대 5개까지!');return;}
+      selIngs.push(dragIngId);
+      renderIngredients();updateSelTags();
+    }
+    addToSlotById(slotId);
+  }
+}
+
+/* ── 주문 카드 드롭 존 (완성 음료→주문 서빙) ── */
+function onOrderDragOver(e, ordId){
+  if(dragSlotId===null) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect='move';
+  document.getElementById('oi-'+ordId)?.classList.add('drop-target');
+}
+function onOrderDragLeave(e, ordId){
+  document.getElementById('oi-'+ordId)?.classList.remove('drop-target');
+}
+function onOrderDrop(e, ordId){
+  e.preventDefault();
+  document.getElementById('oi-'+ordId)?.classList.remove('drop-target');
+  if(dragSlotId!==null){
+    serveFromSlotToOrder(dragSlotId, ordId);
+    dragSlotId=null;
+  }
+}
+
+/* ═══════════════════════════════════
+   BREW SLOTS
+═══════════════════════════════════ */
+function renderBrewSlots(){
+  const wrap=document.getElementById('brewSlots');
+  G.brewSlots=[];wrap.innerHTML='';
+  for(let i=0;i<G.maxSlots;i++){
+    const sl={id:i,item:null,done:false,elapsed:0};
+    G.brewSlots.push(sl);
+    const el=document.createElement('div');
+    el.className='brew-slot';el.id='bs-'+i;
+    el.innerHTML=`<div class="bs-empty">빈 슬롯<br>클릭 or 드롭</div>`;
+    // 클릭: 재료 있으면 제조, 완성이면 서빙
+    el.addEventListener('click',()=>{
+      if(!sl.item) addToSlotById(i);
+      else if(sl.done) serveFromSlot(i);
+    });
+    // 드롭 존: 재료 드래그→드롭
+    el.addEventListener('dragover', e=>onSlotDragOver(e,i));
+    el.addEventListener('dragleave',e=>onSlotDragLeave(e,i));
+    el.addEventListener('drop',     e=>onSlotDrop(e,i));
+    wrap.appendChild(el);
+  }
+}
+
+/* ── 레시피 매칭: 완전 일치만 성공, 아니면 UNKNOWN 객체 반환 ── */
+const UNKNOWN_RECIPE = {
+  id:'unknown', name:'알 수 없는 음료', price:0, tip:0,
+  req:[], brew:2, col:'#888888', isUnknown:true
+};
+
+function matchRecipe(ingIds){
+  const sorted = [...ingIds].sort().join(',');
+  for(const r of RECIPES){
+    if([...r.req].sort().join(',') === sorted) return r;
+  }
+  return UNKNOWN_RECIPE; // 일치 없음 → 알 수 없는 음료
+}
+
+function addToSlot(){ addToSlotById(null); }
+
+function addToSlotById(slotId){
+  // selOrder가 없거나 이미 완료됐으면 → 수락된 주문 중 첫 번째 자동 선택
+  if(!G.selOrder || !G.orders.find(o=>o.id===G.selOrder.id)){
+    const firstAccepted = G.orders.find(o=>o.accepted);
+    if(firstAccepted) G.selOrder = firstAccepted;
+    else { setMsg('⚠ 먼저 주문을 수락하세요!'); return; }
+  }
+  if(!selIngs.length){setMsg('⚠ 재료를 선택하세요!');return;}
+  let sl = slotId!==null ? G.brewSlots[slotId] : G.brewSlots.find(s=>!s.item);
+  if(!sl||sl.item){
+    sl=G.brewSlots.find(s=>!s.item);
+    if(!sl){setMsg('⚠ 빈 슬롯이 없습니다!');return;}
+  }
+  const matched=matchRecipe(selIngs);
+  const isUnknown = matched.isUnknown;
+  if(isUnknown){
+    setMsg(`🧪 알 수 없는 조합... 일단 만들어볼게요!`);
+  } else {
+    setMsg(`✅ "${matched.name}" 제조 시작!`);
+  }
+  sl.item={recipe:matched,orderId:G.selOrder.id,brew:matched.brew,elapsed:0};
+  sl.done=false;sl.elapsed=0;
+  const el=document.getElementById('bs-'+sl.id);
+  el.className='brew-slot active';
+  const brewSecs=(matched.brew/G.brewSpd).toFixed(1);
+  const fillCol=isUnknown?'#6a6a6a':matched.col||'#c8a878';
+  el.innerHTML=`
+    <div class="brew-cup-wrap" style="--brew-dur:${brewSecs}s;--fill-col:${fillCol};">
+      <div class="brew-cup-steam-wrap">
+        <div class="brew-steam" style="height:10px;--sd:1.6s;--sdelay:0s;"></div>
+        <div class="brew-steam" style="height:7px;--sd:1.3s;--sdelay:0.4s;"></div>
+        <div class="brew-steam" style="height:10px;--sd:1.8s;--sdelay:0.8s;"></div>
+      </div>
+      <div class="brew-cup-body">
+        <div class="brew-cup-fill" style="--brew-dur:${brewSecs}s;--fill-col:${fillCol};"></div>
+        <div class="brew-cup-foam" style="--brew-dur:${brewSecs}s;"></div>
+        <div class="brew-cup-bubbles">
+          <div class="brew-bubble" style="--bd:1.1s;--bdelay:0.1s;"></div>
+          <div class="brew-bubble" style="--bd:1.4s;--bdelay:0.5s;"></div>
+          <div class="brew-bubble" style="--bd:1.0s;--bdelay:0.9s;"></div>
+        </div>
+      </div>
+      <div class="brew-cup-handle"></div>
+    </div>
+    <div class="brew-label">${isUnknown?'🧪 ???':matched.name}<br>제조중</div>
+    <div class="bs-progbar"><div class="bs-progfill" style="width:0%"></div></div>`;
+  // 완성 슬롯에 드래그 이벤트 재부착
+  el.addEventListener('dragover', e=>onSlotDragOver(e,sl.id));
+  el.addEventListener('dragleave',e=>onSlotDragLeave(e,sl.id));
+  el.addEventListener('drop',     e=>onSlotDrop(e,sl.id));
+  selIngs=[];updateSelTags();renderIngredients();
+}
+
+
+/* ── 쓰레기통 ── */
+function trashSlot(slotId){
+  const sl=G.brewSlots[slotId];
+  if(!sl||!sl.item){setMsg('⚠ 버릴 음료가 없어요');return;}
+  const name = sl.item.recipe.isUnknown ? '알 수 없는 음료' : sl.item.recipe.name;
+  sl.item=null;sl.done=false;
+  const el=document.getElementById('bs-'+slotId);
+  if(el){
+    el.className='brew-slot';
+    el.removeAttribute('draggable');
+    el.ondragstart=null;el.ondragend=null;
+    el.innerHTML='<div class="bs-empty">빈 슬롯<br>클릭 or 드롭</div>';
+    el.addEventListener('dragover', e=>onSlotDragOver(e,slotId));
+    el.addEventListener('dragleave',e=>onSlotDragLeave(e,slotId));
+    el.addEventListener('drop',     e=>onSlotDrop(e,slotId));
+  }
+  const bin=document.getElementById('trashBin');
+  bin.classList.add('shake');
+  setTimeout(()=>bin.classList.remove('shake'),450);
+  setMsg(`🗑️ "${name}" 버렸습니다`);
+}
+
+function trashSelected(){
+  // 클릭 시: 완성된 슬롯 중 첫 번째를 버림
+  const sl=G.brewSlots.find(s=>s.done);
+  if(!sl){setMsg('⚠ 버릴 완성 음료가 없어요');return;}
+  trashSlot(sl.id);
+}
+
+function onTrashDragOver(e){
+  if(dragSlotId===null)return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect='move';
+  document.getElementById('trashBin').classList.add('drag-over');
+}
+function onTrashDragLeave(e){
+  document.getElementById('trashBin').classList.remove('drag-over');
+}
+function onTrashDrop(e){
+  e.preventDefault();
+  document.getElementById('trashBin').classList.remove('drag-over');
+  if(dragSlotId!==null){
+    trashSlot(dragSlotId);
+    dragSlotId=null;
+  }
+}
+
+function serveOrder(){
+  const sl=G.brewSlots.find(s=>s.done);
+  if(!sl){setMsg('⚠ 완성된 음료가 없어요!');return;}
+  serveFromSlot(sl.id);
+}
+
+function serveFromSlot(sid){
+  const sl=G.brewSlots[sid];
+  if(!sl||!sl.done)return;
+  const ord=G.orders.find(o=>o.id===sl.item.orderId)||G.orders[0];
+  if(!ord){setMsg('⚠ 서빙할 주문이 없어요!');return;}
+  doServe(sid, ord.id);
+}
+
+function serveFromSlotToOrder(sid, ordId){
+  const sl=G.brewSlots[sid];
+  if(!sl||!sl.done){setMsg('⚠ 아직 제조 중입니다!');return;}
+  doServe(sid, ordId);
+}
+
+function doServe(sid, ordId){
+  const sl=G.brewSlots[sid];
+  if(!sl||!sl.done)return;
+  const item=sl.item;
+  const ord=G.orders.find(o=>o.id===ordId);
+  if(!ord){setMsg('⚠ 서빙할 주문이 없어요!');return;}
+  const cust=G.customers.find(c=>c.id===ord.custId);
+  // unknown 음료를 서빙하려 하면 → 실패 + 슬롯에 남겨둠 (버려야 함)
+  if(item.recipe.isUnknown){
+    setMsg(`🧪 알 수 없는 음료는 서빙할 수 없어요. 🗑️ 쓰레기통에 버려주세요!`);
+    return;
+  }
+  const correct=item.recipe.id===ord.recipe.id;
+
+  if(correct){
+    // ✅ 정확한 서빙: 가격 + 팁
+    let tip=Math.floor(ord.recipe.tip*G.tipMult*(cust?cust.patience/100:0.5));
+    if(ord.isDon)tip=Math.floor(tip*G.donTipMult);
+    const earned=ord.recipe.price+tip;
+    G.money+=earned;G.score+=100+tip;
+    G.dayEarned+=earned;G.dayServed++;G.served++;
+    G.happy=Math.min(100,G.happy+4);
+    if(ord.isDon)G.dayDon++;
+    spawnFx('⭐','fx-star');
+    spawnFx('+'+earned+'원','fx-score');
+    for(let i=0;i<3;i++)spawnCoin(i);
+    if(cust&&!cust.left){
+      cust.left=true;
+      const bubble=cust.el?.querySelector('.cust-bubble');
+      if(bubble)bubble.textContent=ord.isDon?'💜 최고예요!':'😊 맛있어요!';
+      setTimeout(()=>{if(cust.el){cust.el.style.left='-80px';setTimeout(()=>cust.el?.remove(),900);}},1400);
+    }
+    G.orders=G.orders.filter(o=>o.id!==ord.id);
+    if(G.selOrder?.id===ord.id)G.selOrder=null;
+    discoverRecipe(item.recipe.id);
+    setMsg(`🎉 ${item.recipe.name} 서빙완료! +${earned}원 (팁 ${tip}원)`);
+  } else {
+    // ❌ 잘못된 음료: 돈 없음, 만족도 하락, 손님은 화냄
+    G.score=Math.max(0,G.score-20);
+    G.dayFailed++;G.failed++;
+    G.happy=Math.max(0,G.happy-6);
+    spawnFx('❌','fx-star');
+    if(cust&&!cust.left){
+      cust.left=true;
+      const bubble=cust.el?.querySelector('.cust-bubble');
+      if(bubble)bubble.textContent=`😡 ${ord.recipe.name} 달라고요!`;
+      setTimeout(()=>{if(cust.el){cust.el.style.left='-80px';setTimeout(()=>cust.el?.remove(),900);}},1600);
+    }
+    G.orders=G.orders.filter(o=>o.id!==ord.id);
+    if(G.selOrder?.id===ord.id)G.selOrder=null;
+    setMsg(`❌ 주문과 다른 음료! "${ord.recipe.name}" 주문인데 "${item.recipe.name}" 서빙 — 실패`);
+  }
+
+  sl.item=null;sl.done=false;
+  const el=document.getElementById('bs-'+sid);
+  if(el){
+    el.className='brew-slot';
+    el.innerHTML='<div class="bs-empty">빈 슬롯<br>클릭 or 드롭</div>';
+    el.addEventListener('dragover', e=>onSlotDragOver(e,sid));
+    el.addEventListener('dragleave',e=>onSlotDragLeave(e,sid));
+    el.addEventListener('drop',     e=>onSlotDrop(e,sid));
+  }
+  renderOrders();updateHUD();
+}
+
+function spawnFx(text,cls){
+  const scene=document.getElementById('cafeScene');
+  const el=document.createElement('div');
+  el.className=cls;el.textContent=text;
+  el.style.left=(30+Math.random()*60)+'%';el.style.top=(20+Math.random()*30)+'%';
+  scene.appendChild(el);setTimeout(()=>el.remove(),1200);
+}
+function spawnCoin(i){
+  const scene=document.getElementById('cafeScene');
+  const el=document.createElement('div');
+  el.className='fx-coin';el.textContent='￦';
+  el.style.cssText=`left:${40+Math.random()*20}%;top:40%;--dx:${(Math.random()-0.5)*60}px;`;
+  scene.appendChild(el);setTimeout(()=>el.remove(),1300);
+}
+
+/* ═══════════════════════════════════
+   RECIPE LIST
+═══════════════════════════════════ */
+function recipeUnlockCount(){
+  // DAY에 따라 공개 개수: day1=3, day2=5, day3=7, day4+=전체
+  return Math.min(RECIPES.length, 3 + (G.day-1)*2);
+}
+
+function renderRecipes(){
+  const unlocked = recipeUnlockCount();
+  const list = document.getElementById('recipeList');
+  list.innerHTML = RECIPES.map((r,i)=>{
+    const isDisc = G.discoveredRecipes.has(r.id);
+    const isUnlocked = i < unlocked || isDisc;
+    if(isUnlocked){
+      // 발견한 레시피는 재료명까지 표시
+      const ingNames = r.req.map(id=>{
+        for(const cat of Object.values(INGREDIENTS)){
+          const f=cat.find(x=>x.id===id);
+          if(f) return f.name;
+        }
+        return id;
+      });
+      return `<div class="recipe-row ${isDisc?'discovered':''}">
+        <div class="rr-art">${drinkArtHTML(r,'22px')}</div>
+        <div class="rr-name">${isDisc?'✨ ':''}<b>${r.name}</b></div>
+        <div class="rr-ing">${ingNames.join(' · ')}</div>
+        <div class="rr-price">₩${r.price}</div>
+      </div>`;
+    } else {
+      // 미공개: 흐릿하게 ??? 표시
+      return `<div class="recipe-row locked">
+        <div class="rr-art" style="filter:blur(2px) brightness(0.3)">${drinkArtHTML(r,'22px')}</div>
+        <div class="rr-name" style="filter:blur(3px);color:var(--border2)">???</div>
+        <div class="rr-ing" style="filter:blur(3px);color:var(--border2)">??? · ???</div>
+        <div class="rr-price" style="color:var(--border2)">???원</div>
+      </div>`;
+    }
+  }).join('');
+  // 잠금 카운트 표시
+  const locked = RECIPES.length - unlocked;
+  const notice = document.getElementById('recipeNotice');
+  if(notice) notice.textContent = locked>0 ? `🔒 ${locked}개 레시피 아직 미공개 — 제조하면 발견!` : '📖 모든 레시피 공개!';
+}
+
+function discoverRecipe(recipeId){
+  if(!G.discoveredRecipes.has(recipeId)){
+    G.discoveredRecipes.add(recipeId);
+    renderRecipes();
+    const r=RECIPES.find(x=>x.id===recipeId);
+    if(r) showDiscoveryBanner(r);
+  }
+}
+
+function showDiscoveryBanner(recipe){
+  const b=document.createElement('div');
+  b.className='discovery-banner';
+  b.innerHTML=`<span style="font-size:1.2rem">✨</span> 새 레시피 발견! <b>${recipe.name}</b> <span style="font-size:1.2rem">✨</span>`;
+  document.getElementById('cafeScene').appendChild(b);
+  setTimeout(()=>b.classList.add('show'),50);
+  setTimeout(()=>{b.classList.remove('show');setTimeout(()=>b.remove(),600);},3000);
+}
+
+/* ═══════════════════════════════════
+   UPGRADES
+═══════════════════════════════════ */
+function renderUpgrades(){
+  document.getElementById('upgradeList').innerHTML=UPGRADES.map(u=>`
+    <button class="upg-btn" ${u.bought?'disabled':''} onclick="buyUpg('${u.id}')">
+      <span class="upg-icon">${u.icon}</span>
+      <div class="upg-info"><div class="upg-name">${u.bought?'✅ '+u.name:u.name}</div><span class="upg-desc">${u.desc}</span></div>
+      <span class="upg-cost">${u.bought?'완료':'₩'+u.cost}</span>
+    </button>`).join('');
+}
+function buyUpg(id){
+  const u=UPGRADES.find(u=>u.id===id);
+  if(!u||u.bought)return;
+  if(G.money<u.cost){setMsg('💰 돈이 부족해요!');return;}
+  G.money-=u.cost;u.bought=true;u.fn();
+  renderUpgrades();updateHUD();
+  setMsg(`✨ "${u.name}" 업그레이드!`);
+}
+
+/* ═══════════════════════════════════
+   HUD
+═══════════════════════════════════ */
+function updateHUD(){
+  document.getElementById('hudMoney').textContent=G.money.toLocaleString();
+  document.getElementById('hudScore').textContent=G.score;
+  document.getElementById('hudHappy').textContent=G.happy;
+  document.getElementById('hudDon').textContent=G.donCount;
+}
+let msgTmr=null;
+function setMsg(txt){
+  document.getElementById('sceneMsg').textContent=txt;
+  document.getElementById('sceneMsg').classList.add('show');
+  if(msgTmr)clearTimeout(msgTmr);
+  msgTmr=setTimeout(()=>document.getElementById('sceneMsg').classList.remove('show'),2800);
+}
+
+/* ═══════════════════════════════════
+   도네이션 수신 공통 처리
+   (시뮬레이터 or 실제 Socket.IO DONATION 이벤트 모두 이 함수로)
+═══════════════════════════════════ */
+const SIM_DONORS=['핑크러버','달콤탱','리본짱','카페요정','말차왕','아이돌팬','꽃단지','딸기맛','빵빵이','메이드팬'];
+const SIM_MSGS=['제일 귀여운 메뉴 주세요!','오늘도 응원해요 🎀','메이드 카페 최고~','단골 될게요!','비싼 거 시킬게요!','분위기 너무 좋아요','맛있겠다 ㅠㅠ','매일 오고싶어요','커피 한잔 부탁드려요','최고의 카페 💕'];
+
+function startDonSimulator(){
+  // 시뮬레이터는 더 이상 자동 실행 안 함
+  // D키(수동)나 실제 치지직 연동으로만 도네이션 발생
+  if(G.simTimer) clearTimeout(G.simTimer);
+}
+
+function simulateDonation(){
+  const donor=SIM_DONORS[Math.floor(Math.random()*SIM_DONORS.length)];
+  const msg=SIM_MSGS[Math.floor(Math.random()*SIM_MSGS.length)];
+  const amounts=[2000,3000,5000,10000];
+  receiveDonation({
+    nickname:donor,
+    message:msg,
+    amount:amounts[Math.floor(Math.random()*amounts.length)],
+  });
+}
+
+/* 실제 치지직 DONATION 이벤트 및 시뮬레이터 공통 진입점 */
+function receiveDonation({nickname, message, amount, isChatOrder=false}){
+  if(amount<2000&&!isChatOrder) return;
+  G.donCount++; updateHUD();
+  showDonToast(nickname, isChatOrder?0:amount, message, isChatOrder);
+  setTimeout(()=>openDonPopup({nickname, message, amount:isChatOrder?0:amount, isChatOrder}), 700);
+}
+
+function showDonToast(who, amt, msg, isChatOrder=false){
+  const t=document.createElement('div');
+  t.className='don-toast';
+  t.style.borderColor = isChatOrder ? 'var(--sky)' : 'var(--border)';
+  t.innerHTML=`
+    <div class="dt-top">
+      <div class="dt-icon" style="${isChatOrder?'background:linear-gradient(135deg,#2288cc,#1155aa)':''}">
+        ${isChatOrder?'💬':'치지직'}
+      </div>
+      <div class="dt-who">${escHtml(who)}</div>
+      <div class="dt-amount">${isChatOrder?'💬 채팅주문':'💰 '+amt.toLocaleString()+'원'}</div>
+    </div>
+    <div class="dt-msg">${escHtml(msg||'')}</div>`;
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.animation='donToastIn 0.4s reverse';setTimeout(()=>t.remove(),400);},4500);
+}
+
+function openDonPopup({nickname, message, amount, isChatOrder=false}){
+  donPending={nickname,message,amount,isChatOrder}; donSelRecipe=null;
+  document.getElementById('donSender').textContent=nickname;
+  document.getElementById('donAmount').textContent=isChatOrder?'💬 채팅 주문':amount.toLocaleString()+'원';
+  document.getElementById('donAmount').style.background=isChatOrder?'linear-gradient(135deg,#2288cc,#1155aa)':'';
+  document.getElementById('donMsg').textContent=message||'(메시지 없음)';
+  const affordable=RECIPES.filter(r=>amount>=r.price).slice(0,6);
+  const show=affordable.length>=3?affordable:RECIPES.slice(0,6);
+  document.getElementById('donDrinks').innerHTML=show.map(r=>`
+    <div class="don-drink-card" id="ddc-${r.id}" onclick="selectDonDrink('${r.id}')">
+      <div class="ddc-art">${drinkArtHTML(r,'36px')}</div>
+      <div class="ddc-name">${r.name}</div>
+      <div class="ddc-price">₩${r.price}</div>
+    </div>`).join('');
+  document.getElementById('donationPopup').classList.add('show');
+}
+
+function selectDonDrink(id){
+  donSelRecipe=RECIPES.find(r=>r.id===id);
+  document.querySelectorAll('.don-drink-card').forEach(e=>e.classList.remove('sel'));
+  document.getElementById('ddc-'+id)?.classList.add('sel');
+}
+
+function confirmDonation(){
+  if(!donSelRecipe){setMsg('⚠ 음료를 선택해주세요!');return;}
+  if(!donPending) return;
+  closeDonation();
+  G.dayDon++;
+  setMsg(`💜 ${donPending.nickname}님 도네이션 주문: ${donSelRecipe.name}!`);
+  setTimeout(()=>spawnCustomer(donSelRecipe), 500);
+}
+
+function closeDonation(){
+  document.getElementById('donationPopup').classList.remove('show');
+  donPending=null; donSelRecipe=null;
+}
+
+/* ═══════════════════════════════════
+   DAY END
+═══════════════════════════════════ */
+function endDay(){
+  if(!G.running)return;
+  G.running=false;G.paused=false;
+  const pb=document.getElementById('pauseBtn');
+  if(pb){pb.textContent='⏸ 일시정지';pb.style.borderColor='';pb.style.color='';}
+  const ov=document.getElementById('pauseOverlay');
+  if(ov) ov.classList.remove('show');
+  clearInterval(G.loop);clearTimeout(G.spawnTmr);clearTimeout(G.simTimer);
+  const grade=G.dayServed>=10?'⭐⭐⭐':G.dayServed>=6?'⭐⭐':G.dayServed>=3?'⭐':'💀';
+  const comment=G.dayServed>=10?'대박 영업! 👑':G.dayServed>=6?'순조로운 하루~':G.dayServed>=3?'조금 더 파이팅!':'힘든 하루였네요...';
+  document.getElementById('deTitle').textContent=`DAY ${G.day} 영업 종료!`;
+  document.getElementById('deGrade').textContent=grade;
+  document.getElementById('deStats').innerHTML=`
+    <div>서빙 완료: <strong>${G.dayServed}건</strong></div>
+    <div>클레임: <strong style="color:var(--red)">${G.dayFailed}건</strong></div>
+    <div class="chzzk-line">💜 도네이션 주문: <strong>${G.dayDon}건</strong></div>
+    <div>오늘 매출: <strong>₩${G.dayEarned.toLocaleString()}</strong></div>
+    <div>누적 자금: <strong>₩${G.money.toLocaleString()}</strong></div>
+    <div style="margin-top:8px;color:var(--gold)">${comment}</div>`;
+  if(G.day>=7&&G.happy<20){showGameOver();return;}
+  document.getElementById('deBtn').textContent=G.day>=7?'🏆 최종 결과':'다음 날 ▶';
+  document.getElementById('deBtn').onclick=G.day>=7?showEnding:nextDay;
+  document.getElementById('dayEndScreen').classList.add('show');
+}
+
+function nextDay(){
+  document.getElementById('dayEndScreen').classList.remove('show');
+  G.day++;initDay();
+}
+function showGameOver(){
+  document.getElementById('goStats').innerHTML=`<div>손님 만족도 폭락! 😱</div><div>최종 자금: <strong>₩${G.money.toLocaleString()}</strong></div><div>총 도네이션: <strong>${G.donCount}건</strong></div>`;
+  document.getElementById('gameOverScreen').classList.add('show');
+}
+function showEnding(){
+  document.getElementById('dayEndScreen').classList.remove('show');
+  document.getElementById('deTitle').textContent='🏆 최종 영업 종료!';
+  document.getElementById('deGrade').textContent=G.score>=2000?'👑 전설의 카페':G.score>=1000?'⭐⭐⭐ 위대한 카페':G.score>=500?'⭐⭐ 좋은 카페':'⭐ 동네 카페';
+  document.getElementById('deStats').innerHTML=`<div>최종 자금: <strong>₩${G.money.toLocaleString()}</strong></div><div>총 점수: <strong>${G.score}점</strong></div><div>총 서빙: <strong>${G.served}건</strong></div><div class="chzzk-line">💜 도네이션 주문: <strong>${G.donCount}건</strong></div><div style="margin-top:8px;color:var(--gold)">메이드 카페 이용해주셔서 감사합니다! ☕</div>`;
+  document.getElementById('deBtn').textContent='🔄 처음부터';
+  document.getElementById('deBtn').onclick=()=>location.reload();
+  document.getElementById('dayEndScreen').classList.add('show');
+}
+
+/* ═══════════════════════════════════
+   UTILS
+═══════════════════════════════════ */
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+/* 키보드 */
+document.addEventListener('keydown',e=>{
+  if(e.key===' '){e.preventDefault();serveOrder();}
+  if(e.key==='p'||e.key==='P'){togglePause();}
+  if(e.key==='Enter'){e.preventDefault();addToSlot();}
+  // 테스트: D키로 도네이션 시뮬
+  if(e.key==='d'||e.key==='D'){if(G.running&&G.chzzkConn)simulateDonation();}
+});
+
+/* 도네이션 팝업 배경 클릭 */
+document.getElementById('donationPopup').addEventListener('click',function(e){if(e.target===this)closeDonation();});
+</script>
+</body>
+</html>
