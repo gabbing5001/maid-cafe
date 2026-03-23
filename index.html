@@ -1863,43 +1863,36 @@ function startOAuthFromModal(){
 }
 
 function startOAuth(){
-  const cid = CHZZK.clientId;
-
-  // file:// 프로토콜 감지 → OAuth redirect 불가 안내
   if(location.protocol === 'file:'){
     setChzzkStatus('err',
-      `⚠ 로컬 파일(file://)은 OAuth 로그인 불가합니다.<br><br>
-       <b style="color:#cc1166">무료 배포 방법 (GitHub Pages):</b><br>
-       <span style="font-family:'Nanum Gothic',sans-serif;line-height:2;">
-       1. github.com 가입<br>
-       2. New repository 생성<br>
-       3. 이 HTML 파일 업로드<br>
-       4. Settings → Pages → Branch: main 선택<br>
-       5. <b>본인ID.github.io/저장소명</b> 으로 접속<br>
-       </span>
-       <small>또는 아래 '고급' 메뉴에서 Access Token 직접 입력</small>`
+      `⚠ 로컬 파일(file://)은 OAuth 로그인 불가합니다.<br>
+       GitHub Pages로 배포 후 접속하세요.<br>
+       <small>또는 아래 고급 메뉴에서 Access Token 직접 입력</small>`
     );
     return;
   }
 
-  const redirect = encodeURIComponent(location.href.split('?')[0]);
+  const cid = CHZZK.clientId;
+  const redirect = location.href.split('?')[0]; // 인코딩 없이
   const state = 'cafe_' + Math.random().toString(36).slice(2,8);
+
+  // sessionStorage에 상태 저장
   sessionStorage.setItem('chzzk_oauth_state', state);
-  sessionStorage.setItem('chzzk_pending', JSON.stringify({channelId:CHZZK.channelId}));
+  sessionStorage.setItem('chzzk_pending', JSON.stringify({
+    channelId: CHZZK.channelId,
+    wasPlaying: G.running ? '1' : '0'
+  }));
 
-  const oauthUrl = `https://chzzk.naver.com/account-interlock?clientId=${encodeURIComponent(cid)}&redirectUri=${redirect}&state=${state}`;
+  // 치지직 로그인 페이지로 이동 (같은 탭)
+  const oauthUrl = 'https://chzzk.naver.com/account-interlock'
+    + '?clientId=' + encodeURIComponent(cid)
+    + '&redirectUri=' + encodeURIComponent(redirect)
+    + '&state=' + encodeURIComponent(state);
 
-  // 디버그: 콘솔에 URL 출력
-  console.log('[치지직 OAuth] 팝업 URL:', oauthUrl);
-  console.log('[치지직 OAuth] clientId:', cid);
-  console.log('[치지직 OAuth] redirectUri:', decodeURIComponent(redirect));
+  console.log('[치지직] OAuth URL:', oauthUrl);
+  console.log('[치지직] redirectUri:', redirect);
 
-  // 게임 상태 저장 (돌아왔을 때 복원용)
-  sessionStorage.setItem('chzzk_was_playing', G.running ? '1' : '0');
-
-  // 같은 탭에서 열기 (팝업은 네이버 로그인 차단됨)
   location.href = oauthUrl;
-  return;
 }
 
 
@@ -1941,44 +1934,49 @@ async function exchangeCode(code){
 
 // 페이지 로드 시 OAuth redirect code 자동 처리
 (function checkOAuthRedirect(){
-  const params=new URLSearchParams(location.search);
-  // 치지직은 'code' 파라미터로 전달 (chzzk_code 아님)
-  const code=params.get('code')||params.get('chzzk_code');
-  if(code){
-    // URL에서 code 제거
-    history.replaceState({},'',location.pathname);
-    // 타이틀 화면 즉시 숨기고 로딩 모달 표시
-    const titleScreen = document.getElementById('titleScreen');
-    if(titleScreen) titleScreen.style.display='none';
-    // sessionStorage에서 channelId 복원
-    const saved=sessionStorage.getItem('chzzk_pending');
-    if(saved){
-      try{
-        const d=JSON.parse(saved);
-        if(d.channelId) CHZZK.channelId=d.channelId;
-      }catch(e){}
-    }
-    // 모달 열고 로딩 표시
-    document.getElementById('chzzkModal').classList.add('show');
-    document.getElementById('chzzkMain').style.display='block';
-    document.getElementById('chzzkDone').style.display='none';
-    setChzzkStatus('loading','🔄 로그인 완료! 토큰 교환 중...');
-    // 타이틀은 숨겼으니 연결 완료 후 게임이 시작돼야 함
-    // connectChzzk 성공 시 launchGame 호출하도록 플래그
-    CHZZK._autoLaunch = true;
-    exchangeCode(code);
+  const params = new URLSearchParams(location.search);
+  const code = params.get('code') || params.get('chzzk_code');
+  if(!code) return; // code 없으면 아무것도 안 함
+
+  // URL 즉시 정리
+  history.replaceState({}, '', location.pathname);
+
+  // sessionStorage 복원
+  const saved = sessionStorage.getItem('chzzk_pending');
+  if(saved){
+    try{
+      const d = JSON.parse(saved);
+      if(d.channelId) CHZZK.channelId = d.channelId;
+    }catch(e){}
   }
+
+  // 타이틀 숨기고 로딩 모달 표시
+  const titleScreen = document.getElementById('titleScreen');
+  if(titleScreen) titleScreen.style.display = 'none';
+
+  const modal = document.getElementById('chzzkModal');
+  const main  = document.getElementById('chzzkMain');
+  const done  = document.getElementById('chzzkDone');
+  if(modal) modal.classList.add('show');
+  if(main)  main.style.display = 'block';
+  if(done)  done.style.display = 'none';
+  setChzzkStatus('loading', '🔄 로그인 완료! 토큰 교환 중...');
+
+  CHZZK._autoLaunch = true;
+  exchangeCode(code);
 })();
 
 async function connectChzzk(){
-  // accessToken은 exchangeCode에서 이미 CHZZK.accessToken에 저장됨
-  // input 값 대신 CHZZK.accessToken 직접 사용
+  // CHZZK.accessToken 우선 사용, 없으면 input에서 읽기
   if(!CHZZK.accessToken){
     const manualTok = document.getElementById('chzzkAccessTokenManual')?.value.trim();
-    if(!manualTok){setChzzkStatus('err','⚠ Access Token이 없습니다. 다시 로그인해주세요.');return;}
+    if(!manualTok){
+      setChzzkStatus('err','⚠ Access Token이 없습니다. 다시 로그인해주세요.');
+      return;
+    }
     CHZZK.accessToken = manualTok.replace(/^Bearer\s+/i,'');
   }
-  setChzzkStatus('loading','🔄 치지직 서버에 세션 연결 중...');
+  setChzzkStatus('loading','🔄 세션 연결 중...');
 
   // ── STEP 1: 세션 URL 발급 (Client 인증)
   // POST https://openapi.chzzk.naver.com/open/v1/sessions
