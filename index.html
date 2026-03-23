@@ -1894,7 +1894,10 @@ function startOAuth(){
   console.log('[치지직] OAuth URL:', oauthUrl);
   console.log('[치지직] redirectUri:', redirect);
 
-  location.href = oauthUrl;
+  // 디버그: URL 확인 후 이동
+  if(confirm('치지직 로그인 페이지로 이동합니다.\n\nredirectUri: ' + redirect + '\n\n개발자센터 등록 URL과 정확히 일치하는지 확인하세요.\n(슬래시, 대소문자 주의)\n\n확인을 누르면 이동합니다.')){
+    location.href = oauthUrl;
+  }
 }
 
 
@@ -1913,11 +1916,15 @@ async function connectWithToken(){
 async function exchangeCode(code){
   setChzzkStatus('loading','🔄 Access Token 교환 중...');
   try{
-    // Worker 프록시 경유 (CORS 우회)
+    const state = sessionStorage.getItem('chzzk_oauth_state') || '';
     const resp=await fetch(`${PROXY_URL}/token`,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({code, redirectUri:location.href.split('?')[0]})
+      body:JSON.stringify({
+        code,
+        state,
+        redirectUri: location.href.split('?')[0]
+      })
     });
     const data=await resp.json();
     if(data?.content?.accessToken){
