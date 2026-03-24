@@ -2026,6 +2026,7 @@ async function connectChzzk(){
       body: JSON.stringify({
         sessionKey:  CHZZK.sessionKey,
         accessToken: CHZZK.accessToken,
+        channelId:   CHZZK.channelId,
       })
     });
     const subData = await subResp.json();
@@ -2038,6 +2039,7 @@ async function connectChzzk(){
         body: JSON.stringify({
           sessionKey:  CHZZK.sessionKey,
           accessToken: CHZZK.accessToken,
+          channelId:   CHZZK.channelId,
         })
       });
       console.log('[치지직] 채팅 이벤트 구독 완료');
