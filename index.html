@@ -1991,16 +1991,20 @@ async function connectChzzk(){
   let sessionUrl = null;
   try {
     // Worker 프록시 경유 (Access Token 방식)
+    console.log('[connectChzzk] accessToken:', CHZZK.accessToken?.slice(0,20)+'...');
     const sessResp = await fetch(`${PROXY_URL}/session`, {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ accessToken: CHZZK.accessToken })
     });
+    console.log('[session] HTTP status:', sessResp.status);
     if(!sessResp.ok) throw new Error(`세션 발급 실패 (${sessResp.status})`);
     const sessData = await sessResp.json();
-    sessionUrl = sessData?.content?.url;
-    CHZZK.sessionKey = sessData?.content?.sessionKey || '';
-    if(!sessionUrl) throw new Error('세션 URL을 받지 못했습니다.');
+    console.log('[session response]', JSON.stringify(sessData).slice(0,200));
+    // 공식 문서: content.url 또는 url
+    sessionUrl = sessData?.content?.url || sessData?.url;
+    CHZZK.sessionKey = sessData?.content?.sessionKey || sessData?.sessionKey || '';
+    if(!sessionUrl) throw new Error('세션 URL 없음: ' + JSON.stringify(sessData).slice(0,100));
     CHZZK.socketUrl = sessionUrl;
     setChzzkStatus('loading','✅ 세션 발급 완료! 연결 중...');
   } catch(e){
