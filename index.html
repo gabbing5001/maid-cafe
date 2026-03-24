@@ -1914,7 +1914,7 @@ async function exchangeCode(code){
   setChzzkStatus('loading','🔄 Access Token 교환 중...');
   try{
     const state = sessionStorage.getItem('chzzk_oauth_state') || '';
-    const resp=await fetch(`${PROXY_URL}/token`,{
+    const resp = await fetch(`${PROXY_URL}/token`,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
@@ -1973,16 +1973,12 @@ async function exchangeCode(code){
 })();
 
 async function connectChzzk(){
-  // CHZZK.accessToken 우선 사용, 없으면 input에서 읽기
   if(!CHZZK.accessToken){
     const manualTok = document.getElementById('chzzkAccessTokenManual')?.value.trim();
-    if(!manualTok){
-      setChzzkStatus('err','⚠ Access Token이 없습니다. 다시 로그인해주세요.');
-      return;
-    }
+    if(!manualTok){ setChzzkStatus('err','⚠ 먼저 로그인해주세요.'); return; }
     CHZZK.accessToken = manualTok.replace(/^Bearer\s+/i,'');
   }
-  setChzzkStatus('loading','🔄 세션 연결 중...');
+  setChzzkStatus('loading','🔄 소켓 URL 발급 중...');
 
   // ── STEP 1: 세션 URL 발급 (Client 인증)
   // POST https://openapi.chzzk.naver.com/open/v1/sessions
@@ -1990,21 +1986,18 @@ async function connectChzzk(){
   // CORS 우회 불가(브라우저) → 프록시 없이 직접 호출 시도 후 CORS 에러면 안내
   let sessionUrl = null;
   try {
-    // Worker 프록시 경유 (Access Token 방식)
-    console.log('[connectChzzk] accessToken:', CHZZK.accessToken?.slice(0,20)+'...');
     const sessResp = await fetch(`${PROXY_URL}/session`, {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ accessToken: CHZZK.accessToken })
     });
-    console.log('[session] HTTP status:', sessResp.status);
-    if(!sessResp.ok) throw new Error(`세션 발급 실패 (${sessResp.status})`);
     const sessData = await sessResp.json();
-    console.log('[session response]', JSON.stringify(sessData).slice(0,200));
-    // 공식 문서: content.url 또는 url
+    if(sessData.code && sessData.code !== 200)
+      throw new Error(`세션 오류 (${sessData.code}): ${sessData.message||''}`);
+    // 응답: { code:200, content: { url } }
     sessionUrl = sessData?.content?.url || sessData?.url;
-    CHZZK.sessionKey = sessData?.content?.sessionKey || sessData?.sessionKey || '';
-    if(!sessionUrl) throw new Error('세션 URL 없음: ' + JSON.stringify(sessData).slice(0,100));
+    if(!sessionUrl) throw new Error('소켓 URL을 받지 못했습니다: ' + JSON.stringify(sessData));
+    // sessionKey는 소켓 연결 후 SYSTEM connected 메시지에서 받음
     CHZZK.socketUrl = sessionUrl;
     setChzzkStatus('loading','✅ 세션 발급 완료! 연결 중...');
   } catch(e){
@@ -2033,13 +2026,10 @@ async function connectChzzk(){
       body: JSON.stringify({
         sessionKey:  CHZZK.sessionKey,
         accessToken: CHZZK.accessToken,
-        channelId:   CHZZK.channelId,
       })
     });
-    if(!subResp.ok){
-      const err=await subResp.json().catch(()=>({}));
-      throw new Error(`구독 실패 (${subResp.status}): ${err.message||''}`);
-    }
+    const subData = await subResp.json();
+    if(subData.code && subData.code !== 200) throw new Error(`구독 오류: ${subData.message||subData.code}`);
     // 채팅 이벤트 구독 (donation:read 와 함께 chat:read 도 구독)
     try {
       await fetch(`${PROXY_URL}/subscribe/chat`, {
@@ -2048,7 +2038,6 @@ async function connectChzzk(){
         body: JSON.stringify({
           sessionKey:  CHZZK.sessionKey,
           accessToken: CHZZK.accessToken,
-          channelId:   CHZZK.channelId,
         })
       });
       console.log('[치지직] 채팅 이벤트 구독 완료');
@@ -2110,20 +2099,21 @@ function chzzkSocketConnect(url){
     const tid = setTimeout(()=>reject(new Error('연결 시간 초과 (5s)')),6000);
 
     sock.on('connect',()=>{
-      clearTimeout(tid);
-      console.log('[치지직] Socket.IO 연결됨');
-      resolve();
+      // connect만으로는 sessionKey가 없음 — SYSTEM connected 메시지 대기
     });
     sock.on('connect_error',(e)=>{
       clearTimeout(tid);
       reject(new Error(e.message||'연결 오류'));
     });
     sock.on('SYSTEM',(data)=>{
-      console.log('[치지직] SYSTEM',data);
       try{
         const d=typeof data==='string'?JSON.parse(data):data;
-        if(d.type==='connected') CHZZK.sessionKey=d.data?.sessionKey||CHZZK.sessionKey;
-      }catch(e){}
+        if(d.type==='connected'){
+          clearTimeout(tid);
+          CHZZK.sessionKey = d.data?.sessionKey || '';
+          resolve(); // sessionKey 받은 후 resolve → 이제 구독 API 호출 가능
+        }
+      }catch(e){ clearTimeout(tid); reject(e); }
     });
     sock.on('DONATION',(data)=>{
       console.log('[치지직] DONATION',data);
