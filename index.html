@@ -1894,10 +1894,7 @@ function startOAuth(){
   console.log('[치지직] OAuth URL:', oauthUrl);
   console.log('[치지직] redirectUri:', redirect);
 
-  // 디버그: URL 확인 후 이동
-  if(confirm('치지직 로그인 페이지로 이동합니다.\n\nredirectUri: ' + redirect + '\n\n개발자센터 등록 URL과 정확히 일치하는지 확인하세요.\n(슬래시, 대소문자 주의)\n\n확인을 누르면 이동합니다.')){
-    location.href = oauthUrl;
-  }
+  location.href = oauthUrl;
 }
 
 
@@ -1993,11 +1990,11 @@ async function connectChzzk(){
   // CORS 우회 불가(브라우저) → 프록시 없이 직접 호출 시도 후 CORS 에러면 안내
   let sessionUrl = null;
   try {
-    // Worker 프록시 경유
+    // Worker 프록시 경유 (Access Token 방식)
     const sessResp = await fetch(`${PROXY_URL}/session`, {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({})
+      body: JSON.stringify({ accessToken: CHZZK.accessToken })
     });
     if(!sessResp.ok) throw new Error(`세션 발급 실패 (${sessResp.status})`);
     const sessData = await sessResp.json();
