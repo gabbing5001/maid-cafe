@@ -228,11 +228,27 @@ body{
   padding:8px 10px;margin-bottom:6px;
   font-size:0.72rem;
   animation:orderIn 0.3s ease-out;
+  transition:all 0.3s;
+}
+.order-card.done{
+  background:linear-gradient(135deg,#f0f8f0,#e0f0e0);
+  border-color:#aaddaa;opacity:0.6;
 }
 @keyframes orderIn{from{transform:translateX(20px);opacity:0;}to{transform:translateX(0);opacity:1;}}
 .order-nick{font-family:'Jua',sans-serif;color:var(--ketchup);font-size:0.8rem;}
+.order-nick.done{color:#88aa88;}
 .order-amount{font-size:0.65rem;color:var(--text2);}
 .order-msg{color:var(--text);margin-top:2px;font-size:0.7rem;}
+.order-footer{display:flex;align-items:center;justify-content:space-between;margin-top:6px;}
+.order-done-btn{
+  background:var(--green);color:#fff;border:none;border-radius:6px;
+  padding:3px 10px;font-family:'Jua',sans-serif;font-size:0.65rem;
+  cursor:pointer;transition:all 0.1s;
+}
+.order-done-btn:hover{filter:brightness(1.1);}
+.order-done-badge{
+  font-size:0.65rem;color:#66aa66;font-family:'Jua',sans-serif;
+}
 .order-timer{height:3px;background:var(--border);border-radius:2px;margin-top:6px;overflow:hidden;}
 .order-timer-bar{height:100%;background:var(--yolk);border-radius:2px;transition:width 0.5s linear;}
 
@@ -1335,7 +1351,14 @@ function showDonPopup(nick, amount, msg, isChatOrder){
 
 function addOrder(nick, amount, msg, isChatOrder){
   const id = Date.now();
-  G.orders.push({id, nick, amount, msg, isChatOrder, time:Date.now()});
+  G.orders.push({id, nick, amount, msg, isChatOrder, time:Date.now(), done:false});
+  renderOrders();
+}
+
+/* 주문 완료 처리 — 완료 버튼 클릭 시 호출 */
+function completeOrder(id){
+  const order = G.orders.find(o=>o.id===id);
+  if(order) order.done = true;
   renderOrders();
 }
 
@@ -1345,11 +1368,18 @@ function renderOrders(){
     list.innerHTML = '<div class="sa-empty" style="font-size:0.7rem;">후원이 들어오면 주문이 추가됩니다</div>';
     return;
   }
-  list.innerHTML = G.orders.slice(-5).reverse().map(o => `
-    <div class="order-card">
-      <div class="order-nick">${o.nick} ${o.isChatOrder?'💬':'💰'}</div>
+  /* 최근 8개 표시 — 완료된 주문은 흐리게, 미완료 주문은 강조 */
+  list.innerHTML = G.orders.slice(-8).reverse().map(o => `
+    <div class="order-card ${o.done?'done':''}">
+      <div class="order-nick ${o.done?'done':''}">${o.nick} ${o.isChatOrder?'💬':'💰'}</div>
       <div class="order-amount">${o.isChatOrder?'채팅 주문':`${o.amount?.toLocaleString()}원`}</div>
       ${o.msg?`<div class="order-msg">${o.msg}</div>`:''}
+      <div class="order-footer">
+        ${o.done
+          ? '<span class="order-done-badge">✅ 완료</span>'
+          : `<button class="order-done-btn" onclick="completeOrder(${o.id})">✔ 완료</button>`
+        }
+      </div>
     </div>
   `).join('');
 }
